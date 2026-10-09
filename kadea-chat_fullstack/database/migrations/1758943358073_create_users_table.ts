@@ -9,6 +9,9 @@ export default class extends BaseSchema {
       table.string('full_name').nullable()
       table.string('email', 254).notNullable().unique()
       table.string('password').notNullable()
+      table.string('avatar_url').nullable()
+      table.boolean('is_email_confirmed').defaultTo(false)
+      table.timestamp('last_seen_at', { useTz: true }).nullable()
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
