@@ -1,51 +1,41 @@
-<!DOCTYPE html>
-<html
-  lang="en-us"
-  data-theme="{{
-    request.plainCookie('app_theme', {
-      defaultValue: 'light',
-      encoded: false,
-    })
-  }}"
->
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AdonisJS — Starter Kit</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @stack('dumper')
-  </head>
-  <body>
-    <div class="auth">
-      <div class="auth__form-col">
-        @!logo({ size: 28 })
-        <div class="auth__form-wrap">{{{ await $slots.main() }}}</div>
-        <div style="height: 20px;"></div>
+{{--
+|--------------------------------------------------------------------------
+| layouts/auth.edge : écran coupé en deux (connexion + inscription)
+|--------------------------------------------------------------------------
+| Gauche : fond clair avec le logo et le formulaire (le "slot" principal).
+| Droite : panneau sombre avec un titre et un texte (visible dès l'écran md).
+|
+| Props attendues :
+|   title      -> titre de l'onglet du navigateur
+|   asideTitle -> grand titre du panneau sombre
+|   asideText  -> petit texte sous le titre
+|
+| NOTE : ce layout est lui-même construit SUR layouts.base. Un composant peut
+| en utiliser un autre : c'est comme ça qu'on évite de recopier le <head>.
+--}}
+@layouts.base({ title: $props.get('title') })
+  <div class="grid min-h-dvh md:grid-cols-2">
+
+    {{-- Colonne gauche : formulaire --}}
+    <section class="flex flex-col bg-brand-50 px-6 py-6 md:px-12">
+      <a href="{{ route('home') }}" class="inline-flex w-fit items-center text-brand-600" aria-label="Retour à l'accueil">
+        @!ui.logo({ size: 'sm', textClass: 'text-brand-600' })
+      </a>
+
+      <div class="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-8">
+        {{{ await $slots.main() }}}
       </div>
+    </section>
 
-      <aside class="auth__aside">
-        <div class="auth__aside-top">
-          @!themeToggle()
-        </div>
+    {{-- Colonne droite : panneau décoratif (caché sur mobile) --}}
+    <aside class="hidden flex-col items-center justify-center bg-brand-950 px-12 text-center text-white md:flex">
+      <h2 class="max-w-md font-display text-3xl font-bold leading-tight">
+        {{ $props.get('asideTitle') }}
+      </h2>
+      <p class="mt-4 max-w-sm text-sm text-white/70">
+        {{ $props.get('asideText') }}
+        </p>
+    </aside>
 
-        <p class="auth__quote">Auth, kept intentionally minimal so you can build it your way.</p>
-
-        <div>
-          <div class="pitch__t">Looking for production-ready auth?</div>
-          <p class="pitch__p">
-            Check out Feature packs, production-ready full-stack components from the creator of AdonisJS.
-          </p>
-          <a
-            class="il pitch__a"
-            href="https://plus.adonisjs.com/feature-packs"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Explore Feature packs →
-          </a>
-        </div>
-      </aside>
-    </div>
-    @include('partials/flash_alerts')
-  </body>
-</html>
+  </div>
+@end

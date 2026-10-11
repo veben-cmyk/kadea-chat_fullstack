@@ -1,0 +1,14 @@
+{{--
+| ui/alert.edge : encadré de message coloré
+| Props : type -> 'error' (défaut) | 'success' | 'info'
+| Le texte du message se place entre @ui.alert(...) et @end.
+--}}
+@let(type = $props.get('type') || 'error')
+@let(styles = {
+    error: 'border-red-300 bg-red-50 text-red-800',
+    success: 'border-green-300 bg-green-50 text-green-800',
+    info: 'border-brand-100 bg-white text-brand-950'
+})
+<div role="{{ type === 'error' ? 'alert' : 'status' }}" class="rounded-lg border px-4 py-3 text-sm {{ styles[type] }}">
+    {{{ await $slots.main() }}}
+</div>
