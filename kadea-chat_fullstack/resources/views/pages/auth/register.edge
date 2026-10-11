@@ -1,0 +1,36 @@
+{{--
+|--------------------------------------------------------------------------
+| pages/auth/register.edge : inscription
+|--------------------------------------------------------------------------
+| Routes : GET /register (register.show)  et  POST /register (register.store)
+|
+| Noms des champs envoyés au serveur (à utiliser dans ton validateur VineJS) :
+|   fullName, email, password, password_confirmation
+| password_confirmation est le nom attendu par la règle VineJS .confirmed().
+| Si ta colonne en base s'appelle full_name, c'est ton modèle qui fait le lien.
+--}}
+@layouts.auth({
+  title: 'Créer un compte',
+  asideTitle: 'Rejoignez votre promo.',
+  asideText: 'Créez votre compte et retrouvez vos camarades en quelques secondes.'
+})
+  <h1 class="mb-8 text-center font-display text-2xl font-bold">Créez votre compte</h1>
+
+  <form method="POST" action="{{ route('register.store') }}" data-loading novalidate class="space-y-4">
+    {{ csrfField() }}
+
+    @!ui.input({ name: 'fullName', label: 'Nom complet', autocomplete: 'name', required: true })
+    @!ui.input({ name: 'email', label: 'E-mail', type: 'email', autocomplete: 'email', required: true })
+    @!ui.input({ name: 'password', label: 'Mot de passe', type: 'password', autocomplete: 'new-password', required: true })
+    @!ui.input({ name: 'password_confirmation', label: 'Confirmez le mot de passe', type: 'password', autocomplete: 'new-password', required: true })
+
+    @ui.button({ loadingText: 'Création du compte...', class: 'w-full' })
+      Créer un compte
+    @end
+  </form>
+
+  <p class="mt-4 text-center text-xs text-brand-600">
+    Vous avez déjà un compte ?
+    <a href="{{ route('login.show') }}" class="font-bold hover:underline">Connectez-vous</a>
+  </p>
+@end
