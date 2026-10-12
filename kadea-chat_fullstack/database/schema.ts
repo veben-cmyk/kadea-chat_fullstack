@@ -13,15 +13,15 @@ export class UserSchema extends BaseModel {
   @column()
   declare avatarUrl: string | null
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare createdAt: DateTime | null
   @column()
   declare email: string
   @column()
-  declare fullName: string | null
+  declare fullName: string
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare isEmailConfirmed: boolean | null
+  declare isEmailConfirmed: boolean
   @column.dateTime()
   declare lastSeenAt: DateTime | null
   @column({ serializeAs: null })
