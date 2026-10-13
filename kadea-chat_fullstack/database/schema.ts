@@ -7,21 +7,87 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class ConversationMemberSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'updatedAt'] as const
+  $columns = ConversationMemberSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class ConversationSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'isGroup', 'name', 'updatedAt'] as const
+  $columns = ConversationSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare isGroup: boolean
+  @column()
+  declare name: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}
+
+export class MessageSchema extends BaseModel {
+  static $columns = ['content', 'conversationId', 'createdAt', 'fileType', 'fileUrl', 'id', 'isDeleted', 'senderId'] as const
+  $columns = MessageSchema.$columns
+  @column()
+  declare content: string | null
+  @column()
+  declare conversationId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare fileType: string | null
+  @column()
+  declare fileUrl: string | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare isDeleted: boolean
+  @column()
+  declare senderId: number
+}
+
+export class TokenSchema extends BaseModel {
+  static $columns = ['createdAt', 'expiresAt', 'id', 'tokenHash', 'type', 'usedAt', 'userId'] as const
+  $columns = TokenSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.dateTime()
+  declare expiresAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare tokenHash: string
+  @column()
+  declare type: string
+  @column.dateTime()
+  declare usedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
 export class UserSchema extends BaseModel {
   static $columns = ['avatarUrl', 'createdAt', 'email', 'fullName', 'id', 'isEmailConfirmed', 'lastSeenAt', 'password', 'updatedAt'] as const
   $columns = UserSchema.$columns
   @column()
   declare avatarUrl: string | null
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare createdAt: DateTime | null
   @column()
   declare email: string
   @column()
-  declare fullName: string | null
+  declare fullName: string
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare isEmailConfirmed: boolean | null
+  declare isEmailConfirmed: boolean
   @column.dateTime()
   declare lastSeenAt: DateTime | null
   @column({ serializeAs: null })
