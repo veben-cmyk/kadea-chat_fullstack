@@ -15,10 +15,21 @@ export default class User extends compose(UserSchema, withAuthFinder(hash)) {
    * otherwise returns the first two characters of the email username.
    */
   get initials() {
-    const [first, last] = this.fullName ? this.fullName.split(' ') : this.email.split('@')
-    if (first && last) {
-      return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase()
+  // 1. Si fullName existe et n'est pas vide
+  if (this.fullName && this.fullName.trim()) {
+    const parts = this.fullName.trim().split(/\s+/) // gère les espaces multiples
+    if (parts.length >= 2) {
+      return `${parts[0].charAt(0)}${parts[parts.length - 1].charAt(0)}`.toUpperCase()
     }
-    return `${first.slice(0, 2)}`.toUpperCase()
+    return parts[0].charAt(0).toUpperCase()
   }
+
+  // 2. Fallback sur l'email si fullName est indisponible
+  if (this.email) {
+    const username = this.email.split('@')[0]
+    return username.slice(0, 2).toUpperCase()
+  }
+
+  return '?'
+}
 }

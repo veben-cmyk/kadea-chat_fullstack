@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+{{--
+|--------------------------------------------------------------------------
+| layouts/base.edge : le "squelette HTML" de TOUTES les pages
+|--------------------------------------------------------------------------
+| Ce composant contient ce qui ne change jamais : <html>, <head> (polices,
+| CSS/JS via Vite), la barre de progression et les messages flash.
+|
+| Utilisation dans une page :
+|   @layouts.base({ title: 'Mon titre' })
+|     ...le contenu de la page...
+|   @end
+|
+| - $props.get('title') : lit la valeur passée entre parenthèses.
+| - $slots.main()       : c'est l'endroit où le contenu de la page est injecté.
+--}}
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $props.get('title') ? $props.get('title') + ' · Kadea Chat' : 'Kadea Chat' }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet">
+
+
+    {{-- @vite : charge le CSS Tailwind et le JS compilés par Vite --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="h-full bg-brand-50 font-sans text-brand-950 antialiased">
+    {{-- Barre de progression : pilotée par app.js (voir startProgress) --}}
+        <div id="top-progress" class="fixed inset-x-0 top-0 z-50 h-1 origin-left scale-x-0 bg-accent opacity-0"></div>
+
+    {{-- Messages flash (succès / erreur envoyés par les contrôleurs) --}}
+    @!ui.flash()
+
+    {{-- Ici arrive le contenu de la page --}}
+    {{{ await $slots.main() }}}
+</body>
+</html>
