@@ -8,14 +8,20 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
 export class ConversationMemberSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'updatedAt'] as const
+  static $columns = ['conversationId', 'id', 'joinedAt', 'lastReadAt', 'role', 'userId'] as const
   $columns = ConversationMemberSchema.$columns
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
+  @column()
+  declare conversationId: number
   @column({ isPrimary: true })
   declare id: number
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
+  @column.dateTime()
+  declare joinedAt: DateTime
+  @column.dateTime()
+  declare lastReadAt: DateTime | null
+  @column()
+  declare role: string
+  @column()
+  declare userId: number
 }
 
 export class ConversationSchema extends BaseModel {
@@ -79,15 +85,15 @@ export class UserSchema extends BaseModel {
   @column()
   declare avatarUrl: string | null
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime | null
+  declare createdAt: DateTime
   @column()
   declare email: string
   @column()
-  declare fullName: string
+  declare fullName: string | null
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare isEmailConfirmed: boolean
+  declare isEmailConfirmed: boolean | null
   @column.dateTime()
   declare lastSeenAt: DateTime | null
   @column({ serializeAs: null })
