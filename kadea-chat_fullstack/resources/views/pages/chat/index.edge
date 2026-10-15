@@ -1,0 +1,22 @@
+{{--
+|--------------------------------------------------------------------------
+| pages/chat/index.edge : messagerie SANS discussion ouverte
+|--------------------------------------------------------------------------
+| Route : GET /chat  (chat.index)   -> accepte ?q=texte pour la recherche
+|
+| Ordinateur : liste à gauche + message "Sélectionne une discussion" à droite.
+| Mobile     : uniquement la liste (view = 'list').
+|
+| Données : conversations (tableau), search (texte, optionnel)
+--}}
+@layouts.app({ title: 'Discussions', view: 'list' })
+    @slot('sidebar')
+    @!chat.sidebar({
+        conversations: conversations, search: search })
+    @end
+
+    @!chat.emptyState({
+    title: 'Sélectionne une discussion',
+    text: 'Choisis une conversation dans la liste pour afficher tes messages.'
+    })
+@end

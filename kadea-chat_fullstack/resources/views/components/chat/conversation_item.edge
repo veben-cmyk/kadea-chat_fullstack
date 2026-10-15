@@ -1,0 +1,24 @@
+{{--
+| chat/conversation_item.edge : UNE ligne de la liste des discussions
+| Props : conversation, active (true si c'est la discussion ouverte)
+|
+| Toute la ligne est un lien vers /chat/:id.
+| aria-current="page" dit aux lecteurs d'écran quelle discussion est ouverte.
+| "truncate" = coupe le texte trop long avec "..." au lieu de casser la mise en page.
+--}}
+@let(c = $props.get('conversation'))
+<a
+  href="{{ route('chat.show', { id: c.id }) }}"
+  class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-brand-400/30 {{ $props.get('active') ? 'bg-brand-400/50' : '' }}"
+  {{ $props.get('active') ? 'aria-current=page' : '' }}
+>
+  @!ui.avatar({ name: c.title, url: c.avatarUrl })
+
+  <div class="min-w-0 flex-1">
+    <div class="flex items-baseline justify-between gap-2">
+      <p class="truncate text-sm font-bold">{{ c.title }}</p>
+      <span class="shrink-0 text-[10px] text-white/70">{{ c.lastMessageTimeLabel }}</span>
+    </div>
+    <p class="truncate text-xs text-white/70">{{ c.lastMessagePreview || 'Aucun message' }}</p>
+  </div>
+</a>

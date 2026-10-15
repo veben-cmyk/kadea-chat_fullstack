@@ -1,0 +1,39 @@
+{{--
+| chat/message_form.edge : la zone de saisie en bas de la conversation
+| Prop : conversationId
+|
+| POINTS IMPORTANTS :
+|  - {{ csrfField() }} : jeton de sécurité obligatoire pour tout formulaire POST
+|    (sinon Adonis répond "403 invalid csrf token").
+|  - data-loading : active le spinner du bouton d'envoi (voir app.js).
+|  - @inputError('content') : affiche l'erreur de validation du message
+|    (ex : message vide ou trop long).
+|  - Le bouton "+" est décoratif pour l'instant (pièces jointes plus tard).
+--}}
+<div class="border-t border-brand-100 bg-brand-50 px-3 py-3">
+  <form method="POST" action="{{ route('messages.store', { id: $props.get('conversationId') }) }}" data-loading class="flex items-center gap-2">
+    {{ csrfField() }}
+
+    <button type="button" disabled class="rounded-lg p-2 text-brand-950 opacity-60" aria-label="Ajouter une pièce jointe (bientôt)" title="Bientôt disponible">
+      @!ui.icon({ name: 'plus', class: 'h-5 w-5' })
+    </button>
+
+    <div class="group min-w-0 flex-1">
+      <label for="content" class="sr-only">Écrire un message</label>
+      <input
+        id="content" name="content" type="text" required autocomplete="off" maxlength="2000"
+        placeholder="Écrire un message..."
+        class="w-full rounded-full border border-brand-600/50 bg-white px-4 py-2.5 text-sm outline-none placeholder:text-brand-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 group-has-[[data-error]]:border-red-500"
+      >
+      @inputError('content')
+        @each(message in $messages)
+          <p data-error class="mt-1 pl-3 text-xs text-red-600" role="alert">{{ message }}</p>
+        @end
+      @end
+    </div>
+
+    @ui.button({ ariaLabel: 'Envoyer le message', class: 'h-10 w-11 !px-0' })
+      @!ui.icon({ name: 'send', class: 'h-5 w-5' })
+    @end
+  </form>
+</div>

@@ -1,0 +1,12 @@
+{{--
+| chat/empty_state.edge : écran affiché quand il n'y a "rien à montrer"
+| Props : title, text
+| Le contenu optionnel (un bouton par exemple) se place dans le slot.
+--}}
+<div class="flex flex-1 flex-col items-center justify-center px-6 text-center">
+  <span class="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-brand-600">
+    @!ui.icon({ name: 'chat', class: 'h-8 w-8' })
+  </span>
+  <h2 class="mt-4 font-display text-lg font-bold">{{ $props.get('title') }}</h2>
+  <p class="mt-1 max-w-xs text-sm text-brand-950/70">{{ $props.get('text') }}</p>
+</div>
