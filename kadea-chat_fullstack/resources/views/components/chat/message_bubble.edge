@@ -1,0 +1,23 @@
+{{--
+| chat/message_bubble.edge : UNE bulle de message
+| Props : message { content, timeLabel, isMine, isRead, senderName }, isGroup
+|
+| - Mes messages : à droite, violet.  Ceux des autres : à gauche, blanc.
+| - {{ message.content }} (2 accolades) ÉCHAPPE le HTML : si quelqu'un envoie
+|   "<script>...", il s'affiche comme du texte et ne s'exécute pas (protection XSS).
+|   Ne mets JAMAIS 3 accolades ici.
+| - "whitespace-pre-wrap" garde les retours à la ligne ; "break-words" coupe
+|   les très longs mots/liens pour qu'ils ne débordent pas.
+--}}
+@let(m = $props.get('message'))
+<div class="flex {{ m.isMine ? 'justify-end' : 'justify-start' }}">
+  <div class="max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] {{ m.isMine ? 'bg-brand-600 text-white' : 'border border-brand-100 bg-white text-brand-950' }}">
+    @if(!m.isMine && $props.get('isGroup') && m.senderName)
+      <p class="mb-0.5 text-xs font-bold text-brand-600">{{ m.senderName }}</p>
+    @end
+    <p class="whitespace-pre-wrap break-words">{{ m.content }}</p>
+    <p class="mt-1 text-right text-[10px] {{ m.isMine ? 'text-white/70' : 'text-brand-400' }}">
+      {{ m.timeLabel }}{{ m.isMine && m.isRead ? ' · lu' : '' }}
+    </p>
+  </div>
+</div>
