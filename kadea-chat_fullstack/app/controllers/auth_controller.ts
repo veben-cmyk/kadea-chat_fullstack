@@ -30,26 +30,27 @@ export default class AuthController {
 
     async register({ request, response, session }: HttpContext) {
     // 1. Valider les données du formulaire
-    const payload = await request.validateUsing(registerValidator)
+        const payload = await request.validateUsing(registerValidator)
 
     // 2. Token en clair (envoyé par e-mail) : sa version hachée ira en base
-    const token = crypto.randomBytes(32).toString('hex')
+        const token = crypto.randomBytes(32).toString('hex')
 
     // 3. Compte et token créés ensemble : si l'un échoue, aucun des deux n'existe
-    const user = await db.transaction(async (trx) => {
-    const newUser = await User.create(payload, { client: trx })
+        const user = await db.transaction(async (trx) => {
+
+            const newUser = await User.create(payload, { client: trx })
 
         await Token.create(
             {
                 userId: newUser.id,
-                type: EMAIL_CONFIRMATION,
-                tokenHash: hashToken(token),
-                expiresAt: DateTime.now().plus({ hours: 24 }),
+            type: EMAIL_CONFIRMATION,
+            tokenHash: hashToken(token),
+            expiresAt: DateTime.now().plus({ hours: 24 }),
             },
-            { 
-                client: trx 
-
-            })
+            {
+            client: trx,
+            }
+        )
 
         return newUser
     })
@@ -68,10 +69,7 @@ export default class AuthController {
         session.flash('success', 'Compte créé ! Vérifie tes e-mails pour activer ton compte.')
     } catch (error) {
         console.error("Erreur lors de l'envoi de l'e-mail de confirmation :", error)
-        session.flash(
-        'warning',
-        "Compte créé, mais l'e-mail de confirmation n'a pas pu être envoyé."
-        )
+        session.flash('warning', "Compte créé, mais l'e-mail de confirmation n'a pas pu être envoyé.")
     }
 
     // 6. Pas de connexion automatique : retour vers la page de connexion
@@ -87,41 +85,38 @@ export default class AuthController {
     // Vérification et modifications dans une seule transaction.
     // forUpdate() verrouille la ligne : deux clics simultanés sur le lien
     // ne peuvent pas le valider deux fois.
-        const confirmed = await db.transaction(async (trx) => {
-
-            const storedToken = await Token.query({ client: trx })
-            .where('tokenHash', tokenHash)
-            .where('type', EMAIL_CONFIRMATION)
-            .whereNull('usedAt')
-            .where('expiresAt', '>', DateTime.now().toJSDate())
-            .forUpdate()
-            .first()
+    const confirmed = await db.transaction(async (trx) => {
+        const storedToken = await Token.query({ client: trx })
+        .where('tokenHash', tokenHash)
+        .where('type', EMAIL_CONFIRMATION)
+        .whereNull('usedAt')
+        .where('expiresAt', '>', DateTime.now().toJSDate())
+        .forUpdate()
+        .first()
 
       // Inconnu, mauvais type, déjà utilisé ou expiré : un seul cas à traiter
-            if (!storedToken) {
-                return false
-            }
+        if (!storedToken) {
+            return false
+        }
 
-            const user = await User.findOrFail(storedToken.userId, { client: trx })
-            user.isEmailConfirmed = true
-            storedToken.usedAt = DateTime.now()
+        const user = await User.findOrFail(storedToken.userId, { client: trx })
+        user.isEmailConfirmed = true
+        storedToken.usedAt = DateTime.now()
 
-            await user.save()
-            await storedToken.save()
+        await user.save()
+        await storedToken.save()
 
-            return true
-        })
+        return true
+    })
 
     if (!confirmed) {
         session.flash('error', 'Ce lien de confirmation est invalide, expiré ou déjà utilisé.')
         return response.redirect().toRoute('login.show')
     }
 
-        session.flash('success', 'Adresse e-mail confirmée ! Tu peux te connecter.')
-        return response.redirect().toRoute('login.show')
+    session.flash('success', 'Adresse e-mail confirmée ! Tu peux te connecter.')
+    return response.redirect().toRoute('login.show')
     }
-
-
 
     /**
    * Affiche la page de connexion
@@ -131,11 +126,11 @@ export default class AuthController {
     }
 
     /**
-    * Traite le formulaire de connexion
-    */
-async login({ request, response, session, auth }: HttpContext) {
+   * Traite le formulaire de connexion
+   */
+    async login({ request, response, session, auth }: HttpContext) {
     // 1. Valider les champs du formulaire (e-mail + mot de passe)
-    const { email, password } = await request.validateUsing(loginValidator)
+        const { email, password } = await request.validateUsing(loginValidator)
 
     // 2. Vérifier les identifiants.
     // verifyCredentials cherche l'utilisateur par e-mail, compare le mot de passe
@@ -150,7 +145,7 @@ async login({ request, response, session, auth }: HttpContext) {
         // On garde l'e-mail tapé (jamais le mot de passe) pour old('email')
         session.flashOnly(['email'])
         return response.redirect().toRoute('login.show')
-    }
+        }
       // Autre erreur (base de données...) : on ne la masque pas
         throw error
     }

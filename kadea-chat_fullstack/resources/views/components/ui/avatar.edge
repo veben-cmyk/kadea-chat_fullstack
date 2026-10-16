@@ -1,0 +1,20 @@
+{{--
+| ui/avatar.edge : pastille ronde avec les initiales (ou la photo si elle existe)
+| Props :
+|   name -> "Chris Mande" donne "CM"
+|   url  -> adresse de la photo (optionnel)
+|   size -> 'sm' | 'md' | 'lg'  (défaut : md)
+|
+| La couleur (orange ou gris-violet) dépend de la longueur du nom : ainsi un
+| même utilisateur garde toujours la même couleur, sans rien stocker.
+--}}
+@let(name = $props.get('name') || '?')
+@let(size = $props.get('size') || 'md')
+@let(sizes = { sm: 'h-9 w-9 text-xs', md: 'h-11 w-11 text-sm', lg: 'h-12 w-12 text-base' })
+@let(initials = name.trim().split(/\s+/).slice(0, 2).map((word) => word.charAt(0)).join('').toUpperCase())
+@let(tone = name.length % 2 === 0 ? 'bg-accent text-brand-950' : 'bg-brand-100 text-brand-950')
+@if($props.get('url'))
+    <img src="{{ $props.get('url') }}" alt="" class="{{ sizes[size] }} shrink-0 rounded-full object-cover">
+@else
+    <span class="{{ sizes[size] }} {{ tone }} inline-flex shrink-0 items-center justify-center rounded-full font-display font-bold" aria-hidden="true">{{ initials }}</span>
+@end

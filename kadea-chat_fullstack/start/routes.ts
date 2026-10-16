@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 const AuthController = () => import('#controllers/auth_controller')
+const ChatController = () => import('#controllers/chats_controller')
 import { middleware } from '#start/kernel'
 
 router.on('/').render('pages/home').as('home')
@@ -24,16 +25,10 @@ router.get('/login', [AuthController, 'showLogin']).as('login.show')
 router.post('/login', [AuthController, 'login']).as('login.store')
 
 
-// Page chat provisoire, réservée aux utilisateurs connectés.
-// Si on n'est pas connecté, le middleware auth renvoie vers la page de login.
-// Messagerie : liste des conversations (page d'accueil du chat)
-router
-    .get('/chat', ({ view }) => view.render('pages/chat/index'))
-    .as('chat.index')
-    .use(middleware.auth())
-
+router.get('/chat', [ChatController, 'index']).as('chat.index').use(middleware.auth())
+router.get('/chat/new', [ChatController, 'create']).as('chat.new').use(middleware.auth())
+router.post('/chat', [ChatController, 'store']).as('chat.store').use(middleware.auth())
+router.get('/chat/:id', [ChatController, 'show']).as('chat.show').use(middleware.auth())
 // Une conversation ouverte (":id" = l'identifiant de la conversation)
-router
-    .get('/chat/:id', ({ view }) => view.render('pages/chat/show'))
-    .as('chat.conversation')
-    .use(middleware.auth())
+
+

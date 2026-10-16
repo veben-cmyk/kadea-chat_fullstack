@@ -11,7 +11,9 @@ export type ScannedRoutes = {
     'login.show': { paramsTuple?: []; params?: {} }
     'login.store': { paramsTuple?: []; params?: {} }
     'chat.index': { paramsTuple?: []; params?: {} }
-    'chat.conversation': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'chat.new': { paramsTuple?: []; params?: {} }
+    'chat.store': { paramsTuple?: []; params?: {} }
+    'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   GET: {
     'home': { paramsTuple?: []; params?: {} }
@@ -19,7 +21,8 @@ export type ScannedRoutes = {
     'verify.email': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'login.show': { paramsTuple?: []; params?: {} }
     'chat.index': { paramsTuple?: []; params?: {} }
-    'chat.conversation': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'chat.new': { paramsTuple?: []; params?: {} }
+    'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   HEAD: {
     'home': { paramsTuple?: []; params?: {} }
@@ -27,11 +30,13 @@ export type ScannedRoutes = {
     'verify.email': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'login.show': { paramsTuple?: []; params?: {} }
     'chat.index': { paramsTuple?: []; params?: {} }
-    'chat.conversation': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'chat.new': { paramsTuple?: []; params?: {} }
+    'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   POST: {
     'register.store': { paramsTuple?: []; params?: {} }
     'login.store': { paramsTuple?: []; params?: {} }
+    'chat.store': { paramsTuple?: []; params?: {} }
   }
 }
 declare module '@adonisjs/core/types/http' {
