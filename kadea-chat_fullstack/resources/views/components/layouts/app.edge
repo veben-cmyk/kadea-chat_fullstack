@@ -39,9 +39,8 @@
         </a>
 
         <a href="{{ route('chat.new') }}"
-      class="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-white transition hover:opacity-90"
-      aria-label="Nouvelle discussion"
-      title="Nouvelle discussion">  
+          class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
+          @!ui.icon({ name: 'users', class: 'h-6 w-6' })
         </a>
 
 
@@ -62,6 +61,10 @@
       <nav class="flex items-center justify-around bg-brand-400 py-3 text-white md:hidden" aria-label="Navigation principale">
         <a href="{{ route('chat.index') }}" class="rounded-lg p-2" aria-label="Discussions">
           @!ui.icon({ name: 'chat', class: 'h-6 w-6' })
+        </a>
+        <a href="{{ route('chat.new') }}"
+          class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
+          @!ui.icon({ name: 'users', class: 'h-6 w-6' })
         </a>
         <a href="#" class="rounded-lg p-2" aria-label="Paramètres">
           @!ui.icon({ name: 'settings', class: 'h-6 w-6' })
