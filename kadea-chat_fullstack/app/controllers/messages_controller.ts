@@ -2,6 +2,8 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
 import Conversation from '#models/conversation'
 import Message from '#models/message'
+import transmit from '@adonisjs/transmit/services/main'
+import { formatMessageTime } from '../helpers/time.js'
 
 export default class MessagesController {
     /**
@@ -39,11 +41,23 @@ export default class MessagesController {
     
         // 3. Enregistrer le message : l'expéditeur vient de la session, jamais du formulaire,
         // sinon on pourrait écrire au nom de quelqu'un d'autre
-        await Message.create({
+        const message = await Message.create({
             conversationId: conversation.id,
             senderId: user.id,
             content,
         })
+
+        // Diffusion en temps réel : tous les navigateurs abonnés à ce canal reçoivent l'événement.
+// On n'envoie PAS "isMine" : chaque navigateur le calcule lui-même en comparant senderId
+// avec son propre identifiant, exactement comme show le fait côté serveur.
+    transmit.broadcast(`conversations/${conversation.id}`, {
+        id: message.id,
+        conversationId: conversation.id,
+        senderId: user.id,
+        senderName: user.fullName,
+        content: message.content,
+        timeLabel: formatMessageTime(message.createdAt),
+    })
 
         // 4. Marquer la conversation comme active : la sidebar les trie par updatedAt,
         // donc celle-ci remontera en haut de la liste

@@ -17,7 +17,14 @@
   @!chat.conversationHeader({ conversation: conversation })
 
   {{-- Zone des messages. id="messages" -> app.js la fait défiler tout en bas. --}}
-  <div id="messages" class="flex-1 space-y-3 overflow-y-auto px-4 py-4" aria-live="polite">
+  <div
+  id="messages"
+  data-conversation-id="{{ conversation.id }}"
+  data-current-user-id="{{ currentUserId }}"
+  data-is-group="{{ conversation.isGroup }}"
+  class="flex-1 space-y-3 overflow-y-auto px-4 py-4"
+  aria-live="polite"
+  >
 
     {{-- SQUELETTE : affiché par showSkeleton('messages') pendant un fetch --}}
     <div data-skeleton="messages" class="hidden space-y-3">
@@ -30,7 +37,8 @@
       @!chat.messageBubble({ message: message, isGroup: conversation.isGroup })
     @else
       {{-- CAS VIDE : conversation sans aucun message --}}
-      <div class="flex h-full items-center justify-center text-center text-sm text-brand-950/70">
+      {{-- ajout de data empty state pour que javascript puisse le retirer quand le premier message arrive --}}
+      <div data-empty-state class="flex h-full items-center justify-center text-center text-sm text-brand-950/70">
         Aucun message pour l'instant. Dis bonjour !
       </div>
     @end
