@@ -10,7 +10,10 @@
 |   les très longs mots/liens pour qu'ils ne débordent pas.
 --}}
 @let(m = $props.get('message'))
-<div class="flex {{ m.isMine ? 'justify-end' : 'justify-start' }}">
+{{-- ajout de data-message-id Ça sert à éviter les doublons : avant d’ajouter une bulle, 
+le JavaScript regarde si elle est déjà dans la page.  --}}
+
+<div data-message-id="{{ m.id }}"  class="flex {{ m.isMine ? 'justify-end' : 'justify-start' }}">
   <div class="max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] {{ m.isMine ? 'bg-brand-600 text-white' : 'border border-brand-100 bg-white text-brand-950' }}">
     @if(!m.isMine && $props.get('isGroup') && m.senderName)
       <p class="mb-0.5 text-xs font-bold text-brand-600">{{ m.senderName }}</p>

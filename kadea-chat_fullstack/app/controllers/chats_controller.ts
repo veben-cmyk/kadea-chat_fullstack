@@ -185,6 +185,12 @@ export default class ChatController {
     // 4. La sidebar affiche toujours la liste complète de mes discussions
     const conversations = await this.buildConversationList(user)
 
-    return view.render('pages/chat/show', { conversations, conversation, messages })
+    return view.render('pages/chat/show', { 
+      conversations, 
+      conversation, 
+      messages,
+      //Le JavaScript doit savoir qui regarde la page pour choisir gauche ou droite.  ajout currentUserId
+      currentUserId: user.id,
+    })
   }
 }

@@ -15,6 +15,9 @@ import { middleware } from '#start/kernel'
 router.on('/').render('pages/home').as('home')
 const MessagesController = () => import('#controllers/messages_controller')
 
+import transmit from '@adonisjs/transmit/services/main'
+import Conversation from '#models/conversation'
+
 
 // 2. Inscription (Register) - En premier
 router.get('/register', [AuthController, 'showRegister']).as('register.show')
@@ -39,5 +42,24 @@ router.post('/chat/:id/messages', [MessagesController, 'store'])
 
 
 
+/**
+ * Canal privé d'une conversation : "conversations/3"
+ * Transmit appelle cette fonction quand un navigateur essaie de s'abonner.
+ * Retourner true accepte l'abonnement, false le refuse.
+ */
+transmit.authorize<{ id: string }>('conversations/:id', async (ctx, { id }) => {
+    await ctx.auth.check()
+    
+    const user = ctx.auth.user
+    if (!user) return false
 
+  // Même règle que dans show et store : il faut être membre de la conversation
+    const conversation = await Conversation.query()
+    .where('id', id)
+    .whereHas('members', (query) => query.where('userId', user.id))
+    .first()
 
+    return conversation !== null
+})
+
+transmit.registerRoutes()
