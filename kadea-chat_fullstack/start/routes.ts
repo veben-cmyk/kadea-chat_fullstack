@@ -13,6 +13,7 @@ const ChatController = () => import('#controllers/chats_controller')
 import { middleware } from '#start/kernel'
 
 router.on('/').render('pages/home').as('home')
+const MessagesController = () => import('#controllers/messages_controller')
 
 
 // 2. Inscription (Register) - En premier
@@ -30,5 +31,13 @@ router.get('/chat/new', [ChatController, 'create']).as('chat.new').use(middlewar
 router.post('/chat', [ChatController, 'store']).as('chat.store').use(middleware.auth())
 router.get('/chat/:id', [ChatController, 'show']).as('chat.show').use(middleware.auth())
 // Une conversation ouverte (":id" = l'identifiant de la conversation)
+
+
+router.post('/chat/:id/messages', [MessagesController, 'store'])
+    .as('messages.store')
+    .use(middleware.auth())
+
+
+
 
 
