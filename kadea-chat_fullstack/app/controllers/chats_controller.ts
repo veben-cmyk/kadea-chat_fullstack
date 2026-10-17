@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { DateTime } from 'luxon'
+import { formatTimeLabel, formatMessageTime } from '../helpers/time.ts'
 import db from '@adonisjs/lucid/services/db'
 import User from '#models/user'
 import Conversation from '#models/conversation'
@@ -9,9 +9,7 @@ import Message from '#models/message'
 /**
  * Heure si le message date d'aujourd'hui, sinon jour/mois (ex: "14:32" ou "12/10")
  */
-function formatTimeLabel(date: DateTime) {
-  return date.hasSame(DateTime.now(), 'day') ? date.toFormat('HH:mm') : date.toFormat('dd/MM')
-}
+
 
 export default class ChatController {
   /**
@@ -181,7 +179,7 @@ export default class ChatController {
       content: message.content,
       senderName: message.sender.fullName,
       isMine: message.senderId === user.id, // sert à aligner la bulle à droite ou à gauche
-      timeLabel: message.createdAt.toFormat('HH:mm'),
+      timeLabel: formatMessageTime(message.createdAt),
     }))
 
     // 4. La sidebar affiche toujours la liste complète de mes discussions
