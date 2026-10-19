@@ -49,6 +49,8 @@ const dbConfig = defineConfig({
           user: env.get('DB_USER'),
           password: env.get('DB_PASSWORD'),
           database: env.get('DB_DATABASE'),
+          // error: SSL/TLS required
+          ssl: env.get('DB_SSL') ? { rejectUnauthorized: false } : false,
         },
         migrations: {
           naturalSort: true,
