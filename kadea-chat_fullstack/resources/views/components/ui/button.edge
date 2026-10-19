@@ -1,0 +1,40 @@
+{{--
+| ui/button.edge : bouton (ou lien qui ressemble à un bouton)
+|
+| Props :
+|   variant     -> 'accent' (orange, défaut) | 'light' (blanc)
+|   type        -> 'submit' (défaut) | 'button'
+|   href        -> si présent, on fabrique un <a> au lieu d'un <button>
+|   loadingText -> texte affiché pendant l'envoi ("Connexion...")
+|   class       -> classes Tailwind en plus (largeur, marges...)
+|   ariaLabel   -> nécessaire pour un bouton qui ne contient qu'une icône
+|
+| LE CHARGEMENT : l'attribut data-submit-button + le <span data-spinner> sont
+| lus par app.js. Quand le <form data-loading> est envoyé, le bouton est
+| désactivé et le cercle tourne. Aucun code à écrire dans les pages.
+--}}
+@let(variant = $props.get('variant') || 'accent')
+@let(variants = {
+  accent: 'bg-accent text-brand-950 hover:bg-accent-dark',
+  light: 'bg-white text-brand-950 hover:bg-brand-100'
+})
+@let(base = 'inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-70')
+@let(classes = base + ' ' + variants[variant] + ' ' + ($props.get('class') || ''))
+
+@if($props.get('href'))
+  <a href="{{ $props.get('href') }}" class="{{ classes }}">{{{ await $slots.main() }}}</a>
+@else
+  <button
+    type="{{ $props.get('type') || 'submit' }}"
+    class="{{ classes }}"
+    data-submit-button
+    data-loading-text="{{ $props.get('loadingText') || '' }}"
+    aria-label="{{ $props.get('ariaLabel') || '' }}"
+  >
+    <svg data-spinner class="hidden h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25" />
+      <path d="M4 12a8 8 0 0 1 8-8" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+    </svg>
+    <span data-label class="inline-flex items-center">{{{ await $slots.main() }}}</span>
+  </button>
+@end

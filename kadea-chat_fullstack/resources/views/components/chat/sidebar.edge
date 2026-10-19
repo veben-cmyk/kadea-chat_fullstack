@@ -1,0 +1,59 @@
+{{--
+|--------------------------------------------------------------------------
+| chat/sidebar.edge : le contenu de la colonne "Discussions"
+|--------------------------------------------------------------------------
+| Réutilisé par pages/chat/index.edge ET pages/chat/show.edge (on ne le
+| recopie pas : c'est tout l'intérêt d'un composant).
+|
+| Props :
+|   conversations -> tableau des discussions (voir le contrat dans le PDF)
+|   activeId      -> id de la discussion ouverte (pour la surligner)
+|   search        -> texte de la recherche en cours ('' si aucune)
+--}}
+@let(conversations = $props.get('conversations') || [])
+@let(search = $props.get('search') || '')
+
+<div class="flex h-full flex-col text-white">
+
+  <header class="px-4 pb-3 pt-5">
+    {{-- Ordinateur : "Discussions" / Mobile : le nom de l'app --}}
+    <h2 class="hidden font-display text-base font-bold md:block">Discussions</h2>
+    <h2 class="font-display text-lg font-bold md:hidden">kadea.chat</h2>
+  </header>
+
+  {{-- Recherche : un simple formulaire GET (?q=...). Le contrôleur filtre. --}}
+  <form method="GET" action="{{ route('chat.index') }}" role="search" class="px-4 pb-3">
+    <label for="q" class="sr-only">Rechercher une discussion</label>
+    <div class="relative">
+      @!ui.icon({ name: 'search', class: 'pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70' })
+      <input
+        id="q" name="q" type="search" value="{{ search }}" placeholder="Rechercher" autocomplete="off"
+        class="w-full rounded-full bg-brand-400/60 py-2 pl-9 pr-3 text-xs text-white outline-none placeholder:text-white/70 focus:ring-2 focus:ring-accent"
+      >
+    </div>
+  </form>
+
+  {{-- Liste des discussions (défile toute seule si elle est longue) --}}
+  <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-3" aria-label="Discussions">
+    @each(conversation in conversations)
+      @!chat.conversationItem({ conversation: conversation, active: conversation.id === $props.get('activeId') })
+    @else
+      {{-- CAS VIDE : aucune discussion (ou aucun résultat de recherche) --}}
+      <div class="px-4 py-10 text-center text-sm text-white/70">
+        @if(search)
+          Aucune discussion ne correspond à « {{ search }} ».
+        @else
+          Aucune discussion pour le moment.
+        @end
+      </div>
+    @end
+
+    {{-- SQUELETTE : caché, affiché par showSkeleton('conversations') --}}
+    <div data-skeleton="conversations" class="hidden">
+      @!chat.conversationSkeleton()
+      @!chat.conversationSkeleton()
+      @!chat.conversationSkeleton()
+    </div>
+  </nav>
+
+</div>

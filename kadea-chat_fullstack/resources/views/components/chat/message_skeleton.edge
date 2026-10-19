@@ -1,0 +1,7 @@
+{{--
+| chat/message_skeleton.edge : fausse bulle de message en chargement
+| Prop : mine -> true pour une bulle alignée à droite
+--}}
+<div class="flex animate-pulse {{ $props.get('mine') ? 'justify-end' : 'justify-start' }}" aria-hidden="true">
+  <div class="h-10 w-48 rounded-xl {{ $props.get('mine') ? 'bg-brand-600/30' : 'bg-brand-100' }}"></div>
+</div>

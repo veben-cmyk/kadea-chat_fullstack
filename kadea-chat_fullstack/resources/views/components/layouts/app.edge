@@ -1,56 +1,81 @@
 {{--
-  Top-level app navigation. Add an entry here for every new area of your
-  app, and it shows up in the navigation bar with its active state handled.
+|--------------------------------------------------------------------------
+| layouts/app.edge : l'interface de messagerie (sidebar + conversation)
+|--------------------------------------------------------------------------
+| Sur ORDINATEUR (md et plus), on voit 3 colonnes côte à côte :
+|   [ barre d'icônes ] [ liste des discussions ] [ conversation ]
+|
+| Sur MOBILE, on ne voit qu'UN seul écran à la fois :
+|   - view = 'list'         -> la liste des discussions (+ barre du bas)
+|   - view = 'conversation' -> la conversation ouverte
+|
+| C'est la prop "view" qui décide, avec les classes Tailwind :
+|   "hidden md:flex"  = caché sur mobile, visible en ligne dès md
+|   "flex"            = toujours visible
+|
+| Slots :
+|   sidebar -> le contenu de la colonne des discussions
+|   (défaut) -> le contenu de la conversation
 --}}
-@let(nav = [{ label: 'Dashboard', route: 'dashboard', icon: 'lucide:house' }])
-@let(pageTitle = $props.get('title'))
-<!DOCTYPE html>
-<html
-  lang="en-us"
-  data-theme="{{
-    request.plainCookie('app_theme', {
-      defaultValue: 'light',
-      encoded: false,
-    })
-  }}"
->
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ pageTitle ? `${pageTitle} - AdonisJS` : 'AdonisJS — Starter Kit' }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @stack('dumper')
-  </head>
-  <body>
-    <header class="header header--bar">
-      <div class="header__inner">
-        @!logo({ size: 28 })
-        <div class="header__right">
-          @!themeToggle()
-          @form({ route: 'session.destroy', method: 'POST' })
-            <button type="submit" class="btn btn--secondary btn--sm">
-              @svg('lucide:log-out', { width: 15, height: 15 })
-              Log out
-            </button>
-          @end
-        </div>
-      </div>
-    </header>
+@let(view = $props.get('view') || 'list')
 
-    <nav class="subnav">
-      <div class="subnav__inner">
-        @each(item in nav)
-          @navLink({ route: item.route, class: 'subnav__item' })
-            @if(item.icon)
-              @svg(item.icon, { width: 14, height: 14 })
-            @end
-            {{ item.label }}
-          @end
-        @end
+@layouts.base({ title: $props.get('title') })
+  {{-- Bannière "connexion perdue" : cachée par défaut, affichée par app.js --}}
+  <div id="offline-banner" class="hidden bg-red-600 px-4 py-2 text-center text-sm font-medium text-white" role="alert">
+    Connexion perdue. Tes messages seront envoyés dès que le réseau revient.
+  </div>
+
+  {{-- h-dvh = hauteur réelle de l'écran (gère la barre d'adresse mobile) --}}
+  <div class="flex h-dvh overflow-hidden">
+
+    {{-- 1. Barre d'icônes verticale (ordinateur uniquement) --}}
+    <nav class="hidden w-[72px] shrink-0 flex-col items-center justify-between bg-brand-400 py-4 text-white md:flex" aria-label="Navigation principale">
+      <div class="flex flex-col items-center gap-6">
+        <a href="{{ route('chat.index') }}" aria-label="Kadea Chat">
+          @!ui.logo({ size: 'sm', withText: false })
+        </a>
+        <a href="{{ route('chat.index') }}" class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
+          @!ui.icon({ name: 'chat', class: 'h-6 w-6' })
+        </a>
+
+        <a href="{{ route('chat.new') }}"
+          class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
+          @!ui.icon({ name: 'users', class: 'h-6 w-6' })
+        </a>
+
+
       </div>
+      {{-- TODO : remplace "#" par ta page de paramètres/profil quand elle existera --}}
+      <a href="#" class="rounded-lg p-2 hover:bg-white/10" aria-label="Paramètres">
+        @!ui.icon({ name: 'settings', class: 'h-6 w-6' })
+      </a>
     </nav>
 
-    <div class="app-main">{{{ await $slots.main() }}}</div>
-    @include('partials/flash_alerts')
-  </body>
-</html>
+    {{-- 2. Colonne des discussions --}}
+    <aside class="{{ view === 'list' ? 'flex' : 'hidden md:flex' }} min-w-0 flex-1 flex-col bg-brand-950 md:w-80 md:flex-none">
+      <div class="min-h-0 flex-1">
+        {{{ await $slots.sidebar() }}}
+      </div>
+
+      {{-- Barre du bas (mobile uniquement, et seulement sur l'écran "liste") --}}
+      <nav class="flex items-center justify-around bg-brand-400 py-3 text-white md:hidden" aria-label="Navigation principale">
+        <a href="{{ route('chat.index') }}" class="rounded-lg p-2" aria-label="Discussions">
+          @!ui.icon({ name: 'chat', class: 'h-6 w-6' })
+        </a>
+        <a href="{{ route('chat.new') }}"
+          class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
+          @!ui.icon({ name: 'users', class: 'h-6 w-6' })
+        </a>
+        <a href="#" class="rounded-lg p-2" aria-label="Paramètres">
+          @!ui.icon({ name: 'settings', class: 'h-6 w-6' })
+        </a>
+      </nav>
+    </aside>
+
+    {{-- 3. Zone de conversation --}}
+    <main class="{{ view === 'conversation' ? 'flex' : 'hidden md:flex' }} min-w-0 flex-1 flex-col bg-brand-50">
+      {{{ await $slots.main() }}}
+    </main>
+
+  </div>
+@end

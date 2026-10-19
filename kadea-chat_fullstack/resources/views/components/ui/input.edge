@@ -1,0 +1,39 @@
+{{--
+| ui/input.edge : un champ de formulaire complet (label + champ + erreurs)
+|
+| Props : name, label, type (défaut text), placeholder, autocomplete, required
+|
+| GESTION DES ERREURS (3 choses automatiques) :
+|  1. old(name)     : après une erreur, le champ se remplit avec ce que
+|                     l'utilisateur avait tapé (sauf les mots de passe).
+|  2. @inputError   : affiche le(s) message(s) d'erreur de VineJS pour CE champ.
+|  3. Bordure rouge : le <p data-error> rend la bordure rouge grâce à la classe
+|                     Tailwind "group-has-[[data-error]]:border-red-500"
+|                     (= "si un enfant du groupe a data-error, alors rouge").
+--}}
+@let(name = $props.get('name'))
+@let(type = $props.get('type') || 'text')
+<div class="group">
+  <label for="{{ name }}" class="mb-1 block text-sm font-medium text-brand-950">
+    {{ $props.get('label') }}
+  </label>
+
+  <input
+    id="{{ name }}"
+    name="{{ name }}"
+    type="{{ type }}"
+    value="{{ type === 'password' ? '' : old(name, '') }}"
+    placeholder="{{ $props.get('placeholder') || '' }}"
+    autocomplete="{{ $props.get('autocomplete') || 'off' }}"
+    {{ $props.get('required') ? 'required' : '' }}
+    aria-describedby="{{ name }}-error"
+    class="w-full rounded-lg border border-brand-400/60 bg-white px-3 py-2.5 text-sm text-brand-950 outline-none transition placeholder:text-brand-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 group-has-[[data-error]]:border-red-500 group-has-[[data-error]]:ring-red-500/20">
+
+  <div id="{{ name }}-error">
+    @inputError(name)
+      @each(message in $messages)
+        <p data-error class="mt-1 text-sm text-red-600" role="alert">{{ message }}</p>
+      @end
+    @end
+  </div>
+</div>

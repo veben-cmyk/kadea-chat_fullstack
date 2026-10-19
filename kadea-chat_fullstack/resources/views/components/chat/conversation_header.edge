@@ -1,0 +1,25 @@
+{{--
+| chat/conversation_header.edge : bandeau en haut de la conversation
+| Props : conversation { title, avatarUrl, isOnline, statusText, isGroup, memberCount }
+|
+| La flèche "retour" n'existe que sur mobile (md:hidden) : elle ramène à la liste.
+--}}
+@let(c = $props.get('conversation'))
+<header class="flex items-center gap-3 border-b border-brand-100 bg-white px-4 py-3">
+  <a href="{{ route('chat.index') }}" class="-ml-1 rounded-lg p-1 text-brand-950 md:hidden" aria-label="Retour aux discussions">
+    @!ui.icon({ name: 'back', class: 'h-6 w-6' })
+  </a>
+
+  @!ui.avatar({ name: c.title, url: c.avatarUrl, size: 'lg' })
+
+  <div class="min-w-0">
+    <h1 class="truncate font-display text-base font-bold">{{ c.title }}</h1>
+    @if(c.isGroup)
+      <p class="text-xs text-brand-400">{{ c.memberCount }} membres</p>
+    @elseif(c.isOnline)
+      <p class="text-xs font-medium text-green-600">en ligne</p>
+    @else
+      <p class="text-xs text-brand-400">{{ c.statusText || 'hors ligne' }}</p>
+    @end
+  </div>
+</header>

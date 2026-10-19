@@ -1,0 +1,25 @@
+{{--
+| ui/flash.edge : notifications "toast" en haut à droite
+|
+| Un "message flash" est un message stocké dans la session pour UNE seule
+| page, puis effacé. Dans un contrôleur tu écris par exemple :
+|     session.flash('success', 'Compte créé, bienvenue !')
+|     session.flash('error', 'Impossible d\'envoyer le message.')
+| et il apparaît ici, puis disparaît seul après 6 s (voir app.js).
+|
+| flashMessages est fourni par @adonisjs/session : rien à importer.
+--}}
+@if(flashMessages.has('success') || flashMessages.has('error'))
+  <div class="fixed right-4 top-4 z-50 w-[min(24rem,calc(100%-2rem))] space-y-2" data-flash>
+    @if(flashMessages.has('success'))
+      @ui.alert({ type: 'success' })
+        {{ flashMessages.get('success') }}
+      @end
+    @end
+    @if(flashMessages.has('error'))
+      @ui.alert({ type: 'error' })
+        {{ flashMessages.get('error') }}
+      @end
+    @end
+  </div>
+@end

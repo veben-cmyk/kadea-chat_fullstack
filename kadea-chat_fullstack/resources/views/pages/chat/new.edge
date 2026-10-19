@@ -1,0 +1,53 @@
+{{--
+| pages/chat/new.edge : choisir une personne pour démarrer une discussion
+| Route : GET /chat/new (chat.new), accepte ?q=texte
+| Données : users (tableau d'utilisateurs), conversations (pour la sidebar), search
+--}}
+@layouts.app({ title: 'Nouvelle discussion', view: 'conversation' })
+    @slot('sidebar')
+    @!chat.sidebar({ conversations: conversations, search: '' })
+@end
+
+    <div class="flex h-full flex-col">
+        <header class="flex items-center gap-3 border-b border-brand-400/30 px-4 py-4">
+            {{-- Retour à la liste (utile surtout sur mobile) --}}
+            <a href="{{ route('chat.index') }}" class="text-sm font-bold text-brand-600 hover:underline">← Retour</a>
+            <h1 class="font-display text-lg font-bold">Nouvelle discussion</h1>
+        </header>
+
+    <div class="mx-auto w-full max-w-xl flex-1 overflow-y-auto p-4">
+        <form method="GET" action="{{ route('chat.new') }}" role="search" class="mb-4">
+            <label for="q" class="sr-only">Rechercher une personne</label>
+            <input id="q" name="q" type="search" value="{{ search }}" placeholder="Nom ou e-mail" autocomplete="off"
+            class="w-full rounded-lg border border-brand-400/60 bg-white px-3 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20">
+        </form>
+
+        <ul class="space-y-2">
+        @each(person in users)
+            <li>
+            {{-- Un clic = un POST qui ouvre ou crée la conversation avec cette personne --}}
+                <form method="POST" action="{{ route('chat.store') }}">
+                    {{ csrfField() }}
+                    <input type="hidden" name="userId" value="{{ person.id }}">
+                    <button type="submit" class="flex w-full items-center gap-3 rounded-xl bg-white px-3 py-2.5 text-left transition hover:bg-brand-400/20">
+                    @!ui.avatar({ name: person.fullName, url: person.avatarUrl })
+                        <span class="min-w-0">
+                        <span class="block truncate text-sm font-bold">{{ person.fullName }}</span>
+                        <span class="block truncate text-xs text-brand-600">{{ person.email }}</span>
+                        </span>
+                    </button>
+                </form>
+            </li>
+        @else
+            <li class="py-10 text-center text-sm text-brand-600">
+                @if(search)
+                    Aucune personne ne correspond à « {{ search }} ».
+                @else
+                    Aucun autre utilisateur pour le moment.
+                @end
+            </li>
+        @end
+        </ul>
+        </div>
+    </div>
+@end

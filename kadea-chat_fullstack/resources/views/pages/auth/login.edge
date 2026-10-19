@@ -1,49 +1,46 @@
-@layouts.auth()
-  <h1 class="auth__title">Welcome back</h1>
-  <p class="auth__sub">Sign in to continue building.</p>
-  @form({
-    route: 'session.store',
-    method: 'POST',
-    class: 'auth__form',
-    'x-data': '{ submitting: false }',
-    'x-on:submit': 'submitting = true',
-  })
-    @field.root({ name: 'email' })
-      @!field.label({ text: 'Email' })
-      @!input.control({
-        type: 'email',
-        autocomplete: 'username',
-        placeholder: 'you@example.com',
-      })
-      @!field.error()
-    @end
-    @field.root({ name: 'password' })
-      @!field.label({ text: 'Password' })
-      @!input.control({
-        type: 'password',
-        autocomplete: 'current-password',
-        placeholder: '••••••••',
-      })
-      @!field.error()
-    @end
-    @!button({
-      text: 'Sign in',
-      type: 'submit',
-      block: true,
-      style: 'margin-top: 4px;',
-      'x-bind:disabled': 'submitting',
-      'x-text': "submitting ? 'One moment…' : 'Sign in'",
-    })
+{{--
+|--------------------------------------------------------------------------
+| pages/auth/login.edge : connexion
+|--------------------------------------------------------------------------
+| Routes : GET /login (login.show)  et  POST /login (login.store)
+|
+| ERREURS GÉRÉES :
+|  - Champs invalides (e-mail mal écrit, champ vide) -> sous chaque champ (ui.input)
+|  - Mauvais e-mail / mot de passe -> encadré rouge en haut du formulaire,
+|    via @error('E_INVALID_CREDENTIALS') (erreur levée par verifyCredentials)
+| CHARGEMENT : data-loading + loadingText sur le bouton.
+--}}
+@layouts.auth({
+  title: 'Connexion',
+  asideTitle: 'Connectez-vous, et discutez en toute sécurité.',
+  asideText: 'Une messagerie fluide et sécurisée, conçue pour les apprenants de Kadea.'
+})
+  <h1 class="mb-8 text-center font-display text-2xl font-bold">Connexion</h1>
+
+  {{-- Erreur "identifiants incorrects" --}}
+  @error('E_INVALID_CREDENTIALS')
+    <div class="mb-4">
+      @ui.alert({ type: 'error' })
+        {{ $message }}
+      @end
+    </div>
   @end
 
-  <p class="auth__foot">
-    
+  {{-- novalidate : on laisse le SERVEUR valider (VineJS) pour garder des messages cohérents --}}
+  <form method="POST" action="{{ route('login.show') }}" data-loading novalidate class="space-y-4">
+    {{ csrfField() }}
 
-    New here?
+    @!ui.input({ name: 'email', label: 'E-mail', type: 'email', autocomplete: 'email', required: true })
+    @!ui.input({ name: 'password', label: 'Mot de passe', type: 'password', autocomplete: 'current-password', required: true })
 
-
-    @link({ route: 'new_account.create', class: 'il' })
-      Create an account
+    @ui.button({ loadingText: 'Connexion...', class: 'w-full' })
+      Se connecter
     @end
-  </p>
+  </form>
+
+  <div class="mt-4 flex items-center justify-between text-xs text-brand-600">
+    {{-- TODO : brancher la page "mot de passe oublié" quand elle existera --}}
+    <a href="#" class="hover:underline">Mot de passe oublié ?</a>
+    <a href="{{ route('register.store') }}" class="hover:underline">Créer un compte</a>
+  </div>
 @end
