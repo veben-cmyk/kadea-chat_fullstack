@@ -7,4 +7,5 @@ export const controllers = {
   Auth: () => import('#controllers/auth_controller'),
   Chats: () => import('#controllers/chats_controller'),
   Messages: () => import('#controllers/messages_controller'),
+  Profile: () => import('#controllers/profile_controller'),
 }

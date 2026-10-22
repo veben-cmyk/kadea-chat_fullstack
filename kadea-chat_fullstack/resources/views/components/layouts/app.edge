@@ -46,9 +46,17 @@
 
       </div>
       {{-- TODO : remplace "#" par ta page de paramètres/profil quand elle existera --}}
-      <a href="#" class="rounded-lg p-2 hover:bg-white/10" aria-label="Paramètres">
+      <a href="{{ route('profile.show') }}" class="rounded-lg p-2 hover:bg-white/10" aria-label="Paramètres">
         @!ui.icon({ name: 'settings', class: 'h-6 w-6' })
       </a>
+
+      {{-- Déconnexion : un formulaire POST, avec le jeton CSRF --}}
+    <form method="POST" action="{{ route('logout') }}">
+      {{ csrfField() }}
+      <button type="submit" class="rounded-lg p-2 hover:bg-white/10" aria-label="Se déconnecter" title="Se déconnecter">
+        @!ui.icon({ name: 'logout', class: 'h-6 w-6' })
+      </button>
+    </form>
     </nav>
 
     {{-- 2. Colonne des discussions --}}
@@ -66,7 +74,7 @@
           class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
           @!ui.icon({ name: 'users', class: 'h-6 w-6' })
         </a>
-        <a href="#" class="rounded-lg p-2" aria-label="Paramètres">
+        <a href="{{ route('profile.show') }}" class="rounded-lg p-2" aria-label="Paramètres">
           @!ui.icon({ name: 'settings', class: 'h-6 w-6' })
         </a>
       </nav>

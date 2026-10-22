@@ -77,3 +77,57 @@ if (list) {
   subscription.create()
   .catch((error) => console.error('Abonnement au temps réel impossible :', error))
 }
+
+// --- Photo de profil : envoi direct à Cloudinary, puis enregistrement de l'adresse ---
+const avatarInput = document.querySelector('[data-avatar-input]')
+
+if (avatarInput) {
+  // Vérifie que ce sont bien tes valeurs (tableau de bord Cloudinary).
+  // Un "upload preset non signé" est fait pour être public : ce n'est pas un secret.
+  const CLOUD_NAME = 'hze8r3qp'
+  const UPLOAD_PRESET = 'veben2001'
+  const MAX_SIZE = 5 * 1024 * 1024 // 5 Mo
+
+  const status = document.querySelector('[data-avatar-status]')
+  const showStatus = (text) => {
+    status.textContent = text
+    status.classList.remove('hidden')
+  }
+
+  avatarInput.addEventListener('change', async () => {
+    const file = avatarInput.files?.[0]
+    if (!file) return
+
+    if (file.size > MAX_SIZE) {
+      showStatus('Photo trop lourde (5 Mo maximum).')
+      return
+    }
+
+    showStatus('Envoi de la photo...')
+
+    try {
+      // FormData : le même format qu'un formulaire avec un champ fichier
+      const data = new FormData()
+      data.append('file', file)
+      data.append('upload_preset', UPLOAD_PRESET)
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: data,
+      })
+      if (!response.ok) throw new Error('Cloudinary a répondu ' + response.status)
+
+      const result = await response.json()
+
+      // On demande à Cloudinary une version carrée 256x256 centrée sur le visage :
+      // la photo reste légère partout (liste des discussions, en-tête, profil).
+      const squareUrl = result.secure_url.replace('/upload/', '/upload/c_fill,g_face,w_256,h_256,f_auto,q_auto/')
+
+      document.querySelector('[data-avatar-url]').value = squareUrl
+      document.getElementById('avatar-form').submit()
+    } catch (error) {
+      console.error('Envoi de la photo impossible :', error)
+      showStatus("L'envoi a échoué. Réessaie avec une autre photo.")
+    }
+  })
+}
