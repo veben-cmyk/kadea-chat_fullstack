@@ -13,6 +13,13 @@ Application de messagerie instantanée fullstack réalisée pour **Kadea Academy
 [![Site en ligne](https://img.shields.io/badge/Demo-en_ligne-8B5CF6)](https://two6-01-kd-dev-web-matin-c-mon-thu-kin-nfr5.onrender.com)
 > Hébergé sur le plan gratuit de Render : le premier chargement peut prendre une trentaine de secondes (mise en veille du serveur).
 
+## 🖼️ Aperçu
+
+![Aperçu du landing page](./img/accueil.png)
+
+![Aperçu du UI chat](./img/UI%20chat.png)
+
+
 ---
 
 ## Fonctionnalités
