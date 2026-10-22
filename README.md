@@ -19,6 +19,8 @@ Application de messagerie instantanée fullstack réalisée pour **Kadea Academy
 
 ![Aperçu du UI chat](./img/UI%20chat.png)
 
+![Aperçu du landing page](./img/profile.png)
+
 
 ---
 
