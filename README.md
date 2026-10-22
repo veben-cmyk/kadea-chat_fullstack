@@ -1,9 +1,16 @@
 # 26-01-kd-dev-web-matin-c-mon-thu-kin-capstone-kadea-chat-veben-cmyk
 # Kadea Chat
 
+![AdonisJS](https://img.shields.io/badge/AdonisJS-7-5A45FF?logo=adonisjs&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-database-336791?logo=postgresql&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-styling-06B6D4?logo=tailwindcss&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=nodedotjs&logoColor=white)
+![Render](https://img.shields.io/badge/Hosted_on-Render-46E3B7?logo=render&logoColor=white)
+
 Application de messagerie instantanée fullstack réalisée pour **Kadea Academy** dans le cadre du projet final de la formation en développement web.
 
 🔗 **Site hébergé :** https://two6-01-kd-dev-web-matin-c-mon-thu-kin-nfr5.onrender.com
+[![Site en ligne](https://img.shields.io/badge/Demo-en_ligne-8B5CF6)](https://two6-01-kd-dev-web-matin-c-mon-thu-kin-nfr5.onrender.com)
 > Hébergé sur le plan gratuit de Render : le premier chargement peut prendre une trentaine de secondes (mise en veille du serveur).
 
 ---
