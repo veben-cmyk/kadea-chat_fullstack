@@ -1,0 +1,63 @@
+{{--
+|--------------------------------------------------------------------------
+| pages/groups/new.edge : créer un groupe
+|--------------------------------------------------------------------------
+| Routes : GET /groups/new (groups.new)  et  POST /groups (groups.store)
+| Données : users (les autres utilisateurs), conversations (pour la sidebar)
+|
+| "memberIds[]" : les crochets disent au serveur de regrouper toutes les cases
+| cochées dans UN tableau (memberIds = ['2', '5']), même s'il n'y en a qu'une.
+--}}
+
+@layouts.app({ title: 'Nouveau groupe', view: 'conversation' })
+  @slot('sidebar')
+    @!chat.sidebar({ conversations: conversations, search: '' })
+  @end
+
+  <div class="flex h-full flex-col">
+    <header class="flex items-center gap-3 border-b border-brand-400/30 px-4 py-4">
+      <a href="{{ route('chat.index') }}" class="text-sm font-bold text-brand-600 hover:underline">← Retour</a>
+      <h1 class="font-display text-lg font-bold">Nouveau groupe</h1>
+    </header>
+
+    <div class="mx-auto w-full max-w-xl flex-1 overflow-y-auto p-4">
+      <form method="POST" action="{{ route('group.store') }}" data-loading novalidate class="space-y-5">
+        {{ csrfField() }}
+
+        @!ui.input({ name: 'name', label: 'Nom du groupe', required: true })
+
+        <fieldset>
+          <legend class="mb-2 text-sm font-medium text-brand-950">Membres</legend>
+
+          <ul class="space-y-2">
+            @each(person in users)
+              <li>
+                <label class="flex cursor-pointer items-center gap-3 rounded-xl bg-white px-3 py-2.5 transition hover:bg-brand-400/20">
+                  <input type="checkbox" name="memberIds[]" value="{{ person.id }}" class="h-4 w-4 accent-brand-600">
+                  @!ui.avatar({ name: person.fullName, url: person.avatarUrl })
+                  <span class="min-w-0">
+                    <span class="block truncate text-sm font-bold">{{ person.fullName }}</span>
+                    <span class="block truncate text-xs text-brand-600">{{ person.email }}</span>
+                  </span>
+                </label>
+              </li>
+            @else
+              <li class="py-6 text-center text-sm text-brand-600">Aucun autre utilisateur pour le moment.</li>
+            @end
+          </ul>
+
+          {{-- Erreur si aucune case n'est cochée --}}
+          @inputError('memberIds')
+            @each(message in $messages)
+              <p data-error class="mt-2 text-sm text-red-600" role="alert">{{ message }}</p>
+            @end
+          @end
+        </fieldset>
+
+        @ui.button({ loadingText: 'Création du groupe...', class: 'w-full' })
+          Créer le groupe
+        @end
+      </form>
+    </div>
+  </div>
+@end
