@@ -15,6 +15,9 @@ import { middleware } from '#start/kernel'
 router.on('/').render('pages/home').as('home')
 const MessagesController = () => import('#controllers/messages_controller')
 
+// profile
+const ProfileController = () => import('#controllers/profile_controller')
+
 import transmit from '@adonisjs/transmit/services/main'
 import Conversation from '#models/conversation'
 
@@ -39,6 +42,18 @@ router.get('/chat/:id', [ChatController, 'show']).as('chat.show').use(middleware
 router.post('/chat/:id/messages', [MessagesController, 'store'])
     .as('messages.store')
     .use(middleware.auth())
+
+    // profile
+router.get('/profile', [ProfileController, 'show']).as('profile.show').use(middleware.auth())
+router.post('/profile', [ProfileController, 'update']).as('profile.update').use(middleware.auth())
+router.post('/profile/password', [ProfileController, 'updatePassword']).as('profile.password').use(middleware.auth())
+
+//profile
+router.post('/profile/avatar', [ProfileController, 'updateAvatar']).as('profile.avatar').use(middleware.auth())
+router.post('/profile/avatar/delete', [ProfileController, 'destroyAvatar']).as('profile.avatar.destroy').use(middleware.auth())
+
+// deconnexion
+router.post('/logout', [AuthController, 'logout']).as('logout').use(middleware.auth())
 
 
 

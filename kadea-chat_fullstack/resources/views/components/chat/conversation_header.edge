@@ -10,7 +10,7 @@
     @!ui.icon({ name: 'back', class: 'h-6 w-6' })
   </a>
 
-  @!ui.avatar({ name: c.title, url: c.avatarUrl, size: 'lg' })
+  @!ui.avatar({ name: c.title, url: c.avatarUrl, size: 'md' })
 
   <div class="min-w-0">
     <h1 class="truncate font-display text-base font-bold">{{ c.title }}</h1>
@@ -19,7 +19,7 @@
     @elseif(c.isOnline)
       <p class="text-xs font-medium text-green-600">en ligne</p>
     @else
-      <p class="text-xs text-brand-400">{{ c.statusText || 'hors ligne' }}</p>
+      <p class="text-xs text-brand-400 text-green-600">{{ c.statusText || 'en ligne' }}</p>
     @end
   </div>
 </header>

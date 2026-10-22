@@ -15,6 +15,12 @@ export type ScannedRoutes = {
     'chat.store': { paramsTuple?: []; params?: {} }
     'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'messages.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'profile.show': { paramsTuple?: []; params?: {} }
+    'profile.update': { paramsTuple?: []; params?: {} }
+    'profile.password': { paramsTuple?: []; params?: {} }
+    'profile.avatar': { paramsTuple?: []; params?: {} }
+    'profile.avatar.destroy': { paramsTuple?: []; params?: {} }
+    'logout': { paramsTuple?: []; params?: {} }
     'event_stream': { paramsTuple?: []; params?: {} }
     'subscribe': { paramsTuple?: []; params?: {} }
     'unsubscribe': { paramsTuple?: []; params?: {} }
@@ -27,6 +33,7 @@ export type ScannedRoutes = {
     'chat.index': { paramsTuple?: []; params?: {} }
     'chat.new': { paramsTuple?: []; params?: {} }
     'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'profile.show': { paramsTuple?: []; params?: {} }
     'event_stream': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -37,6 +44,7 @@ export type ScannedRoutes = {
     'chat.index': { paramsTuple?: []; params?: {} }
     'chat.new': { paramsTuple?: []; params?: {} }
     'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'profile.show': { paramsTuple?: []; params?: {} }
     'event_stream': { paramsTuple?: []; params?: {} }
   }
   POST: {
@@ -44,6 +52,11 @@ export type ScannedRoutes = {
     'login.store': { paramsTuple?: []; params?: {} }
     'chat.store': { paramsTuple?: []; params?: {} }
     'messages.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'profile.update': { paramsTuple?: []; params?: {} }
+    'profile.password': { paramsTuple?: []; params?: {} }
+    'profile.avatar': { paramsTuple?: []; params?: {} }
+    'profile.avatar.destroy': { paramsTuple?: []; params?: {} }
+    'logout': { paramsTuple?: []; params?: {} }
     'subscribe': { paramsTuple?: []; params?: {} }
     'unsubscribe': { paramsTuple?: []; params?: {} }
   }

@@ -163,4 +163,13 @@ export default class AuthController {
     await auth.use('web').login(user)
     return response.redirect().toRoute('chat.index')
     }
+
+    /**
+   * Déconnexion : ferme la session puis renvoie vers la page de connexion
+   */
+    async logout({ response, session, auth }: HttpContext) {
+        await auth.use('web').logout()
+        session.flash('success', 'Tu es déconnecté.')
+        return response.redirect().toRoute('login.show')
+    }
 }
