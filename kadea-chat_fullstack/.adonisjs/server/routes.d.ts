@@ -21,6 +21,8 @@ export type ScannedRoutes = {
     'profile.avatar': { paramsTuple?: []; params?: {} }
     'profile.avatar.destroy': { paramsTuple?: []; params?: {} }
     'logout': { paramsTuple?: []; params?: {} }
+    'group.new': { paramsTuple?: []; params?: {} }
+    'group.store': { paramsTuple?: []; params?: {} }
     'event_stream': { paramsTuple?: []; params?: {} }
     'subscribe': { paramsTuple?: []; params?: {} }
     'unsubscribe': { paramsTuple?: []; params?: {} }
@@ -34,6 +36,7 @@ export type ScannedRoutes = {
     'chat.new': { paramsTuple?: []; params?: {} }
     'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'group.new': { paramsTuple?: []; params?: {} }
     'event_stream': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -45,6 +48,7 @@ export type ScannedRoutes = {
     'chat.new': { paramsTuple?: []; params?: {} }
     'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'group.new': { paramsTuple?: []; params?: {} }
     'event_stream': { paramsTuple?: []; params?: {} }
   }
   POST: {
@@ -57,6 +61,7 @@ export type ScannedRoutes = {
     'profile.avatar': { paramsTuple?: []; params?: {} }
     'profile.avatar.destroy': { paramsTuple?: []; params?: {} }
     'logout': { paramsTuple?: []; params?: {} }
+    'group.store': { paramsTuple?: []; params?: {} }
     'subscribe': { paramsTuple?: []; params?: {} }
     'unsubscribe': { paramsTuple?: []; params?: {} }
   }

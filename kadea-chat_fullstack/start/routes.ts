@@ -18,6 +18,9 @@ const MessagesController = () => import('#controllers/messages_controller')
 // profile
 const ProfileController = () => import('#controllers/profile_controller')
 
+// groups
+const GroupsController = () => import('#controllers/groups_controller')
+
 import transmit from '@adonisjs/transmit/services/main'
 import Conversation from '#models/conversation'
 
@@ -55,6 +58,9 @@ router.post('/profile/avatar/delete', [ProfileController, 'destroyAvatar']).as('
 // deconnexion
 router.post('/logout', [AuthController, 'logout']).as('logout').use(middleware.auth())
 
+// groups
+router.get('/group/new', [GroupsController, 'create']).as('group.new').use(middleware.auth())
+router.post('/group', [GroupsController, 'store']).as('group.store').use(middleware.auth())
 
 
 /**

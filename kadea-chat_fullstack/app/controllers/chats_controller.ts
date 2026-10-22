@@ -1,10 +1,11 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { formatTimeLabel, formatMessageTime } from '../helpers/time.ts'
+import {  formatMessageTime } from '../helpers/time.ts'
 import db from '@adonisjs/lucid/services/db'
 import User from '#models/user'
 import Conversation from '#models/conversation'
 import ConversationMember from '#models/conversation_member'
 import Message from '#models/message'
+import { buildConversationList } from '#services/conversation_list'
 
 /**
  * Heure si le message date d'aujourd'hui, sinon jour/mois (ex: "14:32" ou "12/10")
@@ -16,49 +17,14 @@ export default class ChatController {
    * Construit la liste des discussions de l'utilisateur pour la sidebar.
    * Méthode privée : partagée par index, create (et show plus tard).
    */
-  private async buildConversationList(user: User, search = '') {
-    // 1. Les conversations dont je suis membre, avec tous leurs membres chargés
-    const rows = await Conversation.query()
-      .whereHas('members', (query) => query.where('userId', user.id))
-      .preload('members', (query) => query.preload('user'))
-      .orderBy('updatedAt', 'desc')
-
-    // 2. Transformer chaque conversation en objet simple pour la vue
-    const items = await Promise.all(
-      rows.map(async (conversation) => {
-        // Dans une conversation privée, "l'autre" est le membre qui n'est pas moi
-        const other = conversation.members.find((member) => member.userId !== user.id)?.user
-
-        // Dernier message de CETTE conversation
-        const last = await Message.query()
-          .where('conversationId', conversation.id)
-          .orderBy('createdAt', 'desc')
-          .first()
-
-        return {
-          id: conversation.id,
-          title: conversation.isGroup
-            ? (conversation.name ?? 'Groupe')
-            : (other?.fullName ?? 'Utilisateur'),
-          avatarUrl: conversation.isGroup ? null : (other?.avatarUrl ?? null),
-          lastMessagePreview: last?.content ?? '',
-          lastMessageTimeLabel: last ? formatTimeLabel(last.createdAt) : '',
-        }
-      })
-    )
-
-    // 3. Recherche : on garde les conversations dont le titre contient le texte
-    return search
-      ? items.filter((item) => item.title.toLowerCase().includes(search.toLowerCase()))
-      : items
-  }
+  
 
   /**
    * GET /chat : liste des discussions
    */
   async index({ request, view, auth }: HttpContext) {
     const search = String(request.input('q', '')).trim()
-    const conversations = await this.buildConversationList(auth.user!, search)
+    const conversations = await buildConversationList(auth.user!, search)
 
     return view.render('pages/chat/index', { conversations, search })
   }
@@ -84,7 +50,7 @@ export default class ChatController {
 
     const users = await usersQuery
     // La sidebar de la page affiche toujours la liste complète de mes discussions
-    const conversations = await this.buildConversationList(user)
+    const conversations = await buildConversationList(user)
 
     return view.render('pages/chat/new', { users, conversations, search })
   }
@@ -183,7 +149,7 @@ export default class ChatController {
     }))
 
     // 4. La sidebar affiche toujours la liste complète de mes discussions
-    const conversations = await this.buildConversationList(user)
+    const conversations = await buildConversationList(user)
 
     return view.render('pages/chat/show', { 
       conversations, 
