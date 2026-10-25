@@ -62,6 +62,12 @@ router.post('/logout', [AuthController, 'logout']).as('logout').use(middleware.a
 router.get('/group/new', [GroupsController, 'create']).as('group.new').use(middleware.auth())
 router.post('/group', [GroupsController, 'store']).as('group.store').use(middleware.auth())
 
+// gestion des membres d'un groupe
+router.get('/groups/:id/members', [GroupsController, 'members']).as('groups.members').use(middleware.auth())
+router.post('/groups/:id/members', [GroupsController, 'addMembers']).as('groups.members.add').use(middleware.auth())
+router.post('/groups/:id/members/:userId/remove', [GroupsController, 'removeMember'])
+    .as('groups.members.remove')
+    .use(middleware.auth())
 
 /**
  * Canal privé d'une conversation : "conversations/3"

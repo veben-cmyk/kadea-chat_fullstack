@@ -23,6 +23,9 @@ export type ScannedRoutes = {
     'logout': { paramsTuple?: []; params?: {} }
     'group.new': { paramsTuple?: []; params?: {} }
     'group.store': { paramsTuple?: []; params?: {} }
+    'groups.members': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'groups.members.add': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'groups.members.remove': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'userId': ParamValue} }
     'event_stream': { paramsTuple?: []; params?: {} }
     'subscribe': { paramsTuple?: []; params?: {} }
     'unsubscribe': { paramsTuple?: []; params?: {} }
@@ -37,6 +40,7 @@ export type ScannedRoutes = {
     'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
     'group.new': { paramsTuple?: []; params?: {} }
+    'groups.members': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'event_stream': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -49,6 +53,7 @@ export type ScannedRoutes = {
     'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
     'group.new': { paramsTuple?: []; params?: {} }
+    'groups.members': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'event_stream': { paramsTuple?: []; params?: {} }
   }
   POST: {
@@ -62,6 +67,8 @@ export type ScannedRoutes = {
     'profile.avatar.destroy': { paramsTuple?: []; params?: {} }
     'logout': { paramsTuple?: []; params?: {} }
     'group.store': { paramsTuple?: []; params?: {} }
+    'groups.members.add': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'groups.members.remove': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'userId': ParamValue} }
     'subscribe': { paramsTuple?: []; params?: {} }
     'unsubscribe': { paramsTuple?: []; params?: {} }
   }

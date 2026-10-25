@@ -1,0 +1,73 @@
+{{--
+| pages/groups/members.edge : membres d'un groupe
+| Données : group, members, isAdmin, candidates, conversations
+| Tous les membres voient la liste ; seuls les admins voient les boutons d'ajout et de retrait.
+--}}
+@layouts.app({ title: 'Membres', view: 'conversation' })
+  @slot('sidebar')
+    @!chat.sidebar({ conversations: conversations, activeId: group.id })
+  @end
+
+  <div class="flex h-full flex-col">
+    <header class="flex items-center gap-3 border-b border-brand-400/30 px-4 py-4">
+      <a href="{{ route('chat.show', { id: group.id }) }}" class="text-sm font-bold text-brand-600 hover:underline">← Retour</a>
+      <h1 class="truncate font-display text-lg font-bold">{{ group.name }}</h1>
+    </header>
+
+    <div class="mx-auto w-full max-w-xl flex-1 space-y-6 overflow-y-auto p-4">
+
+      <section aria-labelledby="members-title">
+        <h2 id="members-title" class="mb-2 text-sm font-bold">Membres ({{ members.length }})</h2>
+        <ul class="space-y-2">
+          @each(member in members)
+            <li class="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5">
+              @!ui.avatar({ name: member.fullName, url: member.avatarUrl })
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-bold">{{ member.fullName }}{{ member.isMe ? ' (toi)' : '' }}</p>
+                <p class="truncate text-xs text-brand-600">{{ member.role === 'admin' ? 'Administrateur' : 'Membre' }}</p>
+              </div>
+
+              {{-- Retirer : visible seulement pour un admin, et jamais sur soi-même --}}
+              @if(isAdmin && !member.isMe)
+                <form method="POST" action="{{ route('groups.members.remove', { id: group.id, userId: member.id }) }}">
+                  {{ csrfField() }}
+                  <button type="submit" class="rounded-lg px-2 py-1 text-xs font-bold text-red-600 hover:bg-red-50">Retirer</button>
+                </form>
+              @end
+            </li>
+          @end
+        </ul>
+      </section>
+
+      @if(isAdmin)
+        <section aria-labelledby="add-title">
+          <h2 id="add-title" class="mb-2 text-sm font-bold">Ajouter des membres</h2>
+          <form method="POST" action="{{ route('groups.members.add', { id: group.id }) }}" class="space-y-3">
+            {{ csrfField() }}
+            <ul class="space-y-2">
+              @each(person in candidates)
+                <li>
+                  <label class="flex cursor-pointer items-center gap-3 rounded-xl bg-white px-3 py-2.5 transition hover:bg-brand-400/20">
+                    <input type="checkbox" name="memberIds[]" value="{{ person.id }}" class="h-4 w-4 accent-brand-600">
+                    @!ui.avatar({ name: person.fullName, url: person.avatarUrl })
+                    <span class="min-w-0">
+                      <span class="block truncate text-sm font-bold">{{ person.fullName }}</span>
+                      <span class="block truncate text-xs text-brand-600">{{ person.email }}</span>
+                    </span>
+                  </label>
+                </li>
+              @else
+                <li class="py-4 text-center text-sm text-brand-600">Tout le monde est déjà dans le groupe.</li>
+              @end
+            </ul>
+            @if(candidates.length > 0)
+              @ui.button({ class: 'w-full' })
+                Ajouter la sélection
+              @end
+            @end
+          </form>
+        </section>
+      @end
+    </div>
+  </div>
+@end
