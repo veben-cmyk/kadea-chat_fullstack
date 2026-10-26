@@ -26,6 +26,10 @@ export type ScannedRoutes = {
     'groups.members': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'groups.members.add': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'groups.members.remove': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'userId': ParamValue} }
+    'forgot.show': { paramsTuple?: []; params?: {} }
+    'forgot.store': { paramsTuple?: []; params?: {} }
+    'reset.show': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
+    'reset.store': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'event_stream': { paramsTuple?: []; params?: {} }
     'subscribe': { paramsTuple?: []; params?: {} }
     'unsubscribe': { paramsTuple?: []; params?: {} }
@@ -41,6 +45,8 @@ export type ScannedRoutes = {
     'profile.show': { paramsTuple?: []; params?: {} }
     'group.new': { paramsTuple?: []; params?: {} }
     'groups.members': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'forgot.show': { paramsTuple?: []; params?: {} }
+    'reset.show': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'event_stream': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -54,6 +60,8 @@ export type ScannedRoutes = {
     'profile.show': { paramsTuple?: []; params?: {} }
     'group.new': { paramsTuple?: []; params?: {} }
     'groups.members': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'forgot.show': { paramsTuple?: []; params?: {} }
+    'reset.show': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'event_stream': { paramsTuple?: []; params?: {} }
   }
   POST: {
@@ -69,6 +77,8 @@ export type ScannedRoutes = {
     'group.store': { paramsTuple?: []; params?: {} }
     'groups.members.add': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'groups.members.remove': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'userId': ParamValue} }
+    'forgot.store': { paramsTuple?: []; params?: {} }
+    'reset.store': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'subscribe': { paramsTuple?: []; params?: {} }
     'unsubscribe': { paramsTuple?: []; params?: {} }
   }

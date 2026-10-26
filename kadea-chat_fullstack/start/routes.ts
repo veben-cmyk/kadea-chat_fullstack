@@ -21,6 +21,9 @@ const ProfileController = () => import('#controllers/profile_controller')
 // groups
 const GroupsController = () => import('#controllers/groups_controller')
 
+// forgot password
+const PasswordResetController = () => import('#controllers/password_resets_controller')
+
 import transmit from '@adonisjs/transmit/services/main'
 import Conversation from '#models/conversation'
 
@@ -68,6 +71,13 @@ router.post('/groups/:id/members', [GroupsController, 'addMembers']).as('groups.
 router.post('/groups/:id/members/:userId/remove', [GroupsController, 'removeMember'])
     .as('groups.members.remove')
     .use(middleware.auth())
+
+// forgot password
+
+router.get('/forgot-password', [PasswordResetController, 'showForgot']).as('forgot.show')
+router.post('/forgot-password', [PasswordResetController, 'sendLink']).as('forgot.store')
+router.get('/reset-password/:token', [PasswordResetController, 'showReset']).as('reset.show')
+router.post('/reset-password/:token', [PasswordResetController, 'reset']).as('reset.store')
 
 /**
  * Canal privé d'une conversation : "conversations/3"

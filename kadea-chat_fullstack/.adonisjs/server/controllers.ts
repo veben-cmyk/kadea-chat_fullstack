@@ -8,5 +8,6 @@ export const controllers = {
   Chats: () => import('#controllers/chats_controller'),
   Groups: () => import('#controllers/groups_controller'),
   Messages: () => import('#controllers/messages_controller'),
+  PasswordResets: () => import('#controllers/password_resets_controller'),
   Profile: () => import('#controllers/profile_controller'),
 }

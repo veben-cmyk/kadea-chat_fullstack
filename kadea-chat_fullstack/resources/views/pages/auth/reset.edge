@@ -1,0 +1,21 @@
+{{--
+| pages/auth/reset.edge : choisir un nouveau mot de passe
+| Routes : GET /reset-password/:token (reset.show), POST /reset-password/:token (reset.store)
+| Donnée : token (le même que dans l'adresse ; il sert à construire l'action du formulaire)
+--}}
+@layouts.auth({
+  title: 'Nouveau mot de passe',
+  asideTitle: 'Presque fini.',
+  asideText: 'Choisis un nouveau mot de passe d’au moins 8 caractères.'
+})
+  <h1 class="mb-8 text-center font-display text-2xl font-bold">Nouveau mot de passe</h1>
+
+  <form method="POST" action="{{ route('reset.store', { token: token }) }}" data-loading novalidate class="space-y-4">
+    {{ csrfField() }}
+    @!ui.input({ name: 'password', label: 'Nouveau mot de passe', type: 'password', autocomplete: 'new-password', required: true })
+    @!ui.input({ name: 'password_confirmation', label: 'Confirmez le mot de passe', type: 'password', autocomplete: 'new-password', required: true })
+    @ui.button({ loadingText: 'Enregistrement...', class: 'w-full' })
+      Changer le mot de passe
+    @end
+  </form>
+@end

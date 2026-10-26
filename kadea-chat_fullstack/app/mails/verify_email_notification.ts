@@ -2,8 +2,6 @@ import { BaseMail } from '@adonisjs/mail'
 import type User from '#models/user'//importer
 
 export default class VerifyEmailNotification extends BaseMail {
-  // subject = ''
-  // Garde l'adresse "from" déjà présente dans ton fichier généré
   
   subject = 'Confirme ton adresse e-mail'
 
