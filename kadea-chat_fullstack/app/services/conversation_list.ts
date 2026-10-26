@@ -28,7 +28,7 @@ export async function buildConversationList(user: User, search = '') {
           ? (conversation.name ?? 'Groupe')
           : (other?.fullName ?? 'Utilisateur'),
         avatarUrl: conversation.isGroup ? null : (other?.avatarUrl ?? null),
-        lastMessagePreview: last?.content ?? '',
+        lastMessagePreview: last ? (last.isDeleted ? 'Message supprimé' : last.content) : '',
         lastMessageTimeLabel: last ? formatTimeLabel(last.createdAt) : '',
       }
     })

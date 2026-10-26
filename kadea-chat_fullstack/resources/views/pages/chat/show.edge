@@ -34,7 +34,7 @@
     </div>
 
     @each(message in messages)
-      @!chat.messageBubble({ message: message, isGroup: conversation.isGroup })
+      @!chat.messageBubble({ message: message, isGroup: conversation.isGroup, conversationId: conversation.id  })
     @else
       {{-- CAS VIDE : conversation sans aucun message --}}
       {{-- ajout de data empty state pour que javascript puisse le retirer quand le premier message arrive --}}

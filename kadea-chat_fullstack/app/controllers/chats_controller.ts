@@ -145,6 +145,7 @@ export default class ChatController {
       content: message.content,
       senderName: message.sender.fullName,
       isMine: message.senderId === user.id, // sert à aligner la bulle à droite ou à gauche
+      isDeleted: message.isDeleted, 
       timeLabel: formatMessageTime(message.createdAt),
     }))
 

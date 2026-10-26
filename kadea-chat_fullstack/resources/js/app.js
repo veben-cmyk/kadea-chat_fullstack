@@ -39,6 +39,7 @@ if (list) {
 
     const text = document.createElement('p')
     text.className = 'whitespace-pre-wrap break-words'
+    text.dataset.messageText = ''
     // textContent (et pas innerHTML) : si quelqu'un envoie "<script>", il s'affiche
     // comme du texte au lieu de s'exécuter. C'est l'équivalent des 2 accolades d'Edge.
     text.textContent = message.content
@@ -64,12 +65,27 @@ if (list) {
     scrollToBottom()
   }
 
+    // Un message vient d'être supprimé par son auteur : on transforme la bulle sur place
+  function markDeleted(id) {
+    const row = list.querySelector(`[data-message-id="${id}"]`)
+    if (!row) return
+
+    const text = row.querySelector('[data-message-text]')
+    text.textContent = 'Ce message a été supprimé'
+    text.classList.add('italic', 'opacity-70')
+    row.querySelector('[data-delete-form]')?.remove()
+  }
+
   // Connexion ouverte avec le serveur, puis abonnement au canal de CETTE conversation
   const transmit = new Transmit({ baseUrl: window.location.origin })
   const subscription = transmit.subscription(`conversations/${conversationId}`)
 
   // À chaque message diffusé par le serveur (transmit.broadcast), on ajoute la bulle
   subscription.onMessage((message) => {
+    if (message.isDeleted) {
+      markDeleted(message.id)
+      return
+    }
     addMessage(message)
   })
 

@@ -13,14 +13,28 @@
 {{-- ajout de data-message-id Ça sert à éviter les doublons : avant d’ajouter une bulle, 
 le JavaScript regarde si elle est déjà dans la page.  --}}
 
-<div data-message-id="{{ m.id }}"  class="flex {{ m.isMine ? 'justify-end' : 'justify-start' }}">
+<div data-message-id="{{ m.id }}" class="flex {{ m.isMine ? 'justify-end' : 'justify-start' }}">
   <div class="max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] {{ m.isMine ? 'bg-brand-600 text-white' : 'border border-brand-100 bg-white text-brand-950' }}">
     @if(!m.isMine && $props.get('isGroup') && m.senderName)
       <p class="mb-0.5 text-xs font-bold text-brand-600">{{ m.senderName }}</p>
     @end
-    <p class="whitespace-pre-wrap break-words">{{ m.content }}</p>
-    <p class="mt-1 text-right text-[10px] {{ m.isMine ? 'text-white/70' : 'text-brand-400' }}">
-      {{ m.timeLabel }}{{ m.isMine && m.isRead ? ' · lu' : '' }}
-    </p>
-  </div>
+
+    {{-- data-message-text : app.js s'en sert pour remplacer le texte quand le message est supprimé --}}
+    @if(m.isDeleted)
+      <p data-message-text class="whitespace-pre-wrap break-words italic opacity-70">Ce message a été supprimé</p>
+    @else
+      <p data-message-text class="whitespace-pre-wrap break-words">{{ m.content }}</p>
+    @end
+
+    <div class="mt-1 flex items-center justify-end gap-2 text-[10px] {{ m.isMine ? 'text-white/70' : 'text-brand-400' }}">
+      {{-- Supprimer : seulement sur MES messages non supprimés --}}
+      @if(m.isMine && !m.isDeleted)
+        <form data-delete-form method="POST" action="{{ route('messages.destroy', { id: $props.get('conversationId'), messageId: m.id }) }}">
+          {{ csrfField() }}
+          <button type="submit" class="hover:underline" aria-label="Supprimer ce message">Supprimer</button>
+        </form>
+      @end
+      <span>{{ m.timeLabel }}{{ m.isMine && m.isRead ? ' · lu' : '' }}</span>
+    </div>
+    </div>
 </div>

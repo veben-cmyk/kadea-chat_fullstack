@@ -1,0 +1,23 @@
+{{--
+| pages/auth/forgot.edge : demander un lien de réinitialisation
+| Routes : GET /forgot-password (forgot.show), POST /forgot-password (forgot.store)
+--}}
+@layouts.auth({
+  title: 'Mot de passe oublié',
+  asideTitle: 'Pas de panique.',
+  asideText: 'Entre ton e-mail et nous t’envoyons un lien pour choisir un nouveau mot de passe.'
+})
+  <h1 class="mb-8 text-center font-display text-2xl font-bold">Mot de passe oublié</h1>
+
+  <form method="POST" action="{{ route('forgot.store') }}" data-loading novalidate class="space-y-4">
+    {{ csrfField() }}
+    @!ui.input({ name: 'email', label: 'E-mail', type: 'email', autocomplete: 'email', required: true })
+    @ui.button({ loadingText: 'Envoi...', class: 'w-full' })
+      Envoyer le lien
+    @end
+  </form>
+
+  <p class="mt-4 text-center text-xs text-brand-600">
+    <a href="{{ route('login.show') }}" class="font-bold hover:underline">Retour à la connexion</a>
+  </p>
+@end
