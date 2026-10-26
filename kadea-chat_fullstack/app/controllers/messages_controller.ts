@@ -68,4 +68,33 @@ export default class MessagesController {
         return response.redirect().toRoute('chat.show', { id: conversation.id })
 
     }
+
+    /** POST /chat/:id/messages/:messageId/delete : supprimer MON message */
+  async destroy({ params, response, session, auth }: HttpContext) {
+    const user = auth.user!
+
+    // Le message doit être dans CETTE conversation, écrit par MOI, et pas déjà supprimé.
+    // Ces trois conditions empêchent de supprimer le message de quelqu'un d'autre
+    // en changeant un numéro dans l'adresse.
+    const message = await Message.query()
+      .where('id', params.messageId)
+      .where('conversationId', params.id)
+      .where('senderId', user.id)
+      .where('isDeleted', false)
+      .first()
+
+    if (!message) {
+      session.flash('error', 'Message introuvable.')
+      return response.redirect().toRoute('chat.show', { id: params.id })
+    }
+
+    message.isDeleted = true
+    message.content = '' // le texte est vraiment effacé, pas seulement masqué
+    await message.save()
+
+    // Prévient les autres navigateurs ouverts sur cette conversation
+    transmit.broadcast(`conversations/${params.id}`, { isDeleted: true, id: message.id })
+
+    return response.redirect().toRoute('chat.show', { id: params.id })
+  }
 }

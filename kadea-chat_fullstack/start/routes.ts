@@ -72,6 +72,12 @@ router.post('/groups/:id/members/:userId/remove', [GroupsController, 'removeMemb
     .as('groups.members.remove')
     .use(middleware.auth())
 
+// suppression d'un message
+router
+  .post('/chat/:id/messages/:messageId/delete', [MessagesController, 'destroy'])
+  .as('messages.destroy')
+  .use(middleware.auth())
+
 // forgot password
 
 router.get('/forgot-password', [PasswordResetController, 'showForgot']).as('forgot.show')

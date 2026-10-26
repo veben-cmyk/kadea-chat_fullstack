@@ -26,6 +26,7 @@ export type ScannedRoutes = {
     'groups.members': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'groups.members.add': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'groups.members.remove': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'userId': ParamValue} }
+    'messages.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'messageId': ParamValue} }
     'forgot.show': { paramsTuple?: []; params?: {} }
     'forgot.store': { paramsTuple?: []; params?: {} }
     'reset.show': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
@@ -77,6 +78,7 @@ export type ScannedRoutes = {
     'group.store': { paramsTuple?: []; params?: {} }
     'groups.members.add': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'groups.members.remove': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'userId': ParamValue} }
+    'messages.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'messageId': ParamValue} }
     'forgot.store': { paramsTuple?: []; params?: {} }
     'reset.store': { paramsTuple: [ParamValue]; params: {'token': ParamValue} }
     'subscribe': { paramsTuple?: []; params?: {} }
