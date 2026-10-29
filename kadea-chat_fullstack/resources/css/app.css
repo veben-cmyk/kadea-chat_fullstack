@@ -6,9 +6,6 @@
 | 2) @theme : on déclare NOS couleurs et NOS polices. Tailwind génère alors
 |    automatiquement les classes : bg-brand-950, text-accent, font-display...
 |
-| Si tu es sur Tailwind v3, ces valeurs vont dans tailwind.config.js
-| (theme.extend.colors / fontFamily). Les noms de classes restent identiques.
-|
 | Ajuste les couleurs avec les valeurs exactes de ton Figma si besoin.
 */
 @import 'tailwindcss';

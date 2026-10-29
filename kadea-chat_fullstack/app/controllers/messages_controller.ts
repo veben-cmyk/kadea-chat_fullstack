@@ -13,8 +13,8 @@ export default class MessagesController {
 
         const user = auth.user!
 
-    // 1. La conversation doit exister ET je dois en être membre.
-    // Sans ce test, quelqu'un pourrait écrire dans une conversation qui n'est pas la sienne.
+        // 1. La conversation doit exister ET je dois en être membre.
+        // Sans ce test, quelqu'un pourrait écrire dans une conversation qui n'est pas la sienne.
         const conversation = await Conversation.query()
             .where('id', params.id)
             .whereHas('members', (query) => query.where('userId', user.id))
@@ -48,16 +48,16 @@ export default class MessagesController {
         })
 
         // Diffusion en temps réel : tous les navigateurs abonnés à ce canal reçoivent l'événement.
-// On n'envoie PAS "isMine" : chaque navigateur le calcule lui-même en comparant senderId
-// avec son propre identifiant, exactement comme show le fait côté serveur.
-    transmit.broadcast(`conversations/${conversation.id}`, {
-        id: message.id,
-        conversationId: conversation.id,
-        senderId: user.id,
-        senderName: user.fullName,
-        content: message.content,
-        timeLabel: formatMessageTime(message.createdAt),
-    })
+        // On n'envoie PAS "isMine" : chaque navigateur le calcule lui-même en comparant senderId
+        // avec son propre identifiant, exactement comme show le fait côté serveur.
+        transmit.broadcast(`conversations/${conversation.id}`, {
+            id: message.id,
+            conversationId: conversation.id,
+            senderId: user.id,  
+            senderName: user.fullName,
+            content: message.content,
+            timeLabel: formatMessageTime(message.createdAt),
+        })
 
         // 4. Marquer la conversation comme active : la sidebar les trie par updatedAt,
         // donc celle-ci remontera en haut de la liste
@@ -70,31 +70,31 @@ export default class MessagesController {
     }
 
     /** POST /chat/:id/messages/:messageId/delete : supprimer MON message */
-  async destroy({ params, response, session, auth }: HttpContext) {
-    const user = auth.user!
+    async destroy({ params, response, session, auth }: HttpContext) {
+        const user = auth.user!
 
-    // Le message doit être dans CETTE conversation, écrit par MOI, et pas déjà supprimé.
-    // Ces trois conditions empêchent de supprimer le message de quelqu'un d'autre
-    // en changeant un numéro dans l'adresse.
-    const message = await Message.query()
-      .where('id', params.messageId)
-      .where('conversationId', params.id)
-      .where('senderId', user.id)
-      .where('isDeleted', false)
-      .first()
+        // Le message doit être dans CETTE conversation, écrit par MOI, et pas déjà supprimé.
+        // Ces trois conditions empêchent de supprimer le message de quelqu'un d'autre
+        // en changeant un numéro dans l'adresse.
+        const message = await Message.query()
+            .where('id', params.messageId)
+            .where('conversationId', params.id)
+            .where('senderId', user.id)
+            .where('isDeleted', false)
+            .first()
 
-    if (!message) {
-      session.flash('error', 'Message introuvable.')
-      return response.redirect().toRoute('chat.show', { id: params.id })
+        if (!message) {
+            session.flash('error', 'Message introuvable.')
+            return response.redirect().toRoute('chat.show', { id: params.id })
+        }
+
+        message.isDeleted = true
+        message.content = '' // le texte est vraiment effacé, pas seulement masqué
+        await message.save()
+
+        // Prévient les autres navigateurs ouverts sur cette conversation
+        transmit.broadcast(`conversations/${params.id}`, { isDeleted: true, id: message.id })
+
+        return response.redirect().toRoute('chat.show', { id: params.id })
     }
-
-    message.isDeleted = true
-    message.content = '' // le texte est vraiment effacé, pas seulement masqué
-    await message.save()
-
-    // Prévient les autres navigateurs ouverts sur cette conversation
-    transmit.broadcast(`conversations/${params.id}`, { isDeleted: true, id: message.id })
-
-    return response.redirect().toRoute('chat.show', { id: params.id })
-  }
 }

@@ -8,32 +8,30 @@
 */
 
 import router from '@adonisjs/core/services/router'
-const AuthController = () => import('#controllers/auth_controller')
-const ChatController = () => import('#controllers/chats_controller')
 import { middleware } from '#start/kernel'
-
-router.on('/').render('pages/home').as('home')
-const MessagesController = () => import('#controllers/messages_controller')
-
-// profile
-const ProfileController = () => import('#controllers/profile_controller')
-
-// groups
-const GroupsController = () => import('#controllers/groups_controller')
-
-// forgot password
-const PasswordResetController = () => import('#controllers/password_resets_controller')
-
 import transmit from '@adonisjs/transmit/services/main'
 import Conversation from '#models/conversation'
 
+const AuthController = () => import('#controllers/auth_controller')
+const ChatController = () => import('#controllers/chats_controller')
+const MessagesController = () => import('#controllers/messages_controller')
+// profile
+const ProfileController = () => import('#controllers/profile_controller')
+// groups
+const GroupsController = () => import('#controllers/groups_controller')
+// forgot password
+const PasswordResetController = () => import('#controllers/password_resets_controller')
 
-// 2. Inscription (Register) - En premier
+
+// landing page
+router.on('/').render('pages/home').as('home')
+
+// Inscription (Register) - En premier
 router.get('/register', [AuthController, 'showRegister']).as('register.show')
 router.post('/register', [AuthController, 'register']).as('register.store')
 router.get('/verify-email/:token', [AuthController, 'verifyEmail']).as('verify.email')
 
-// 3. Connexion (Login)
+// Connexion (Login)
 router.get('/login', [AuthController, 'showLogin']).as('login.show')
 router.post('/login', [AuthController, 'login']).as('login.store')
 
@@ -42,19 +40,19 @@ router.get('/chat', [ChatController, 'index']).as('chat.index').use(middleware.a
 router.get('/chat/new', [ChatController, 'create']).as('chat.new').use(middleware.auth())
 router.post('/chat', [ChatController, 'store']).as('chat.store').use(middleware.auth())
 router.get('/chat/:id', [ChatController, 'show']).as('chat.show').use(middleware.auth())
-// Une conversation ouverte (":id" = l'identifiant de la conversation)
+
 
 
 router.post('/chat/:id/messages', [MessagesController, 'store'])
     .as('messages.store')
     .use(middleware.auth())
 
-    // profile
+// profile
 router.get('/profile', [ProfileController, 'show']).as('profile.show').use(middleware.auth())
 router.post('/profile', [ProfileController, 'update']).as('profile.update').use(middleware.auth())
 router.post('/profile/password', [ProfileController, 'updatePassword']).as('profile.password').use(middleware.auth())
 
-//profile
+//profile(avatar)
 router.post('/profile/avatar', [ProfileController, 'updateAvatar']).as('profile.avatar').use(middleware.auth())
 router.post('/profile/avatar/delete', [ProfileController, 'destroyAvatar']).as('profile.avatar.destroy').use(middleware.auth())
 
@@ -74,9 +72,9 @@ router.post('/groups/:id/members/:userId/remove', [GroupsController, 'removeMemb
 
 // suppression d'un message
 router
-  .post('/chat/:id/messages/:messageId/delete', [MessagesController, 'destroy'])
-  .as('messages.destroy')
-  .use(middleware.auth())
+    .post('/chat/:id/messages/:messageId/delete', [MessagesController, 'destroy'])
+    .as('messages.destroy')
+    .use(middleware.auth())
 
 // forgot password
 

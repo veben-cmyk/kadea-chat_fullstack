@@ -7,9 +7,7 @@ import ConversationMember from '#models/conversation_member'
 import Message from '#models/message'
 import { buildConversationList } from '#services/conversation_list'
 
-/**
- * Heure si le message date d'aujourd'hui, sinon jour/mois (ex: "14:32" ou "12/10")
- */
+
 
 
 export default class ChatController {

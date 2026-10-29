@@ -40,8 +40,6 @@ if (list) {
     const text = document.createElement('p')
     text.className = 'whitespace-pre-wrap break-words'
     text.dataset.messageText = ''
-    // textContent (et pas innerHTML) : si quelqu'un envoie "<script>", il s'affiche
-    // comme du texte au lieu de s'exécuter. C'est l'équivalent des 2 accolades d'Edge.
     text.textContent = message.content
 
     const time = document.createElement('p')
