@@ -1,0 +1,18 @@
+{{--
+| ui/theme_toggle.edge : bouton lune / soleil pour changer de thème
+| Prop : class (optionnel)
+|
+| - data-theme-toggle : app.js écoute ce bouton, bascule la classe "dark" sur <html>
+|   et mémorise le choix. Plusieurs boutons peuvent coexister sur la page.
+| - dark:hidden / hidden dark:block : en thème clair on voit la lune ("passer en sombre"),
+|   en thème sombre on voit le soleil. C'est le CSS qui choisit, pas le JavaScript.
+--}}
+<button type="button" data-theme-toggle class="rounded-lg p-2 hover:bg-white/10 {{ $props.get('class') || '' }}" aria-label="Changer de thème" title="Changer de thème">
+  <svg class="h-6 w-6 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+  </svg>
+  <svg class="hidden h-6 w-6 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+  </svg>
+</button>

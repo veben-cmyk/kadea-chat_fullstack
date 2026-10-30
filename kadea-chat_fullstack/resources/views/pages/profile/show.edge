@@ -76,6 +76,18 @@
       </form>
     </section>
 
+    <section class="rounded-2xl bg-white p-5 shadow-sm" aria-labelledby="theme-title">
+  <div class="flex items-center justify-between gap-3">
+    <div>
+      <h2 id="theme-title" class="font-display text-base font-bold">Apparence</h2>
+      <p class="text-xs text-brand-600">Thème clair ou sombre</p>
+    </div>
+    <button type="button" data-theme-toggle class="rounded-lg border border-brand-400/60 px-3 py-2 text-sm font-bold">
+      Basculer le thème
+    </button>
+  </div>
+    </section>
+
     {{-- Déconnexion --}}
     <section class="rounded-2xl bg-white p-5 shadow-sm">
       <form method="POST" action="{{ route('logout') }}">

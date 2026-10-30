@@ -144,4 +144,15 @@ if (avatarInput) {
       showStatus("L'envoi a échoué. Réessaie avec une autre photo.")
     }
   })
+  
 }
+
+// --- Mode sombre : chaque bouton [data-theme-toggle] bascule le thème et le mémorise ---
+document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const dark = document.documentElement.classList.toggle('dark')
+    try {
+      localStorage.setItem('theme', dark ? 'dark' : 'light')
+    } catch (error) {}
+  })
+})
