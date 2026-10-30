@@ -1,20 +1,10 @@
-/*
-|--------------------------------------------------------------------------
-| resources/css/app.css  (Tailwind CSS v4)
-|--------------------------------------------------------------------------
-| 1) On importe Tailwind.
-| 2) @theme : on déclare NOS couleurs et NOS polices. Tailwind génère alors
-|    automatiquement les classes : bg-brand-950, text-accent, font-display...
-|
-| Ajuster les couleurs avec les valeurs exactes de Figma .
-*/
 @import 'tailwindcss';
 /* Dit à Tailwind de scanner aussi les fichiers .edge pour trouver les classes */
+@source '../views';
+
 /* Tailwind 4 : "dark:" suit par défaut la préférence du système. Cette ligne le fait
    dépendre de la classe "dark" sur <html>, ce que le bouton bascule. */
 @custom-variant dark (&:where(.dark, .dark *));
-
-@source '../views';
 
 @theme {
   --color-brand-50: #f2effc;   /* fond clair (formulaires, zone de messages) */
@@ -23,20 +13,28 @@
   --color-brand-600: #4a3baf;  /* bulles envoyées, liens */
   --color-brand-950: #2d245c;  /* fond sombre principal */
   --color-accent: #f6a93b;     /* orange : boutons, logo */
-    --color-accent-dark: #e2932a;
+  --color-accent-dark: #e2932a;
 
-    --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
-    --font-sans: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
+  /* Rôles de couleur : valeurs du mode CLAIR.
+     Ils DOIVENT être ici : c'est @theme qui fait créer bg-page, bg-surface, text-ink... */
+  --color-page: #f2effc;     /* fond de page et zone de messages */
+  --color-surface: #ffffff;  /* cartes, en-têtes, champs, bulles reçues */
+  --color-ink: #2d245c;      /* texte principal */
+  --color-line: #e4def8;     /* bordures */
+  --color-muted: #8b7db8;    /* heures, textes secondaires */
+  --color-link: #4a3baf;     /* liens */
+
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
 }
 
-
-/* Mode sombre : même noms, autres valeurs. Tout ce qui utilise bg-surface, text-ink... change seul. */
+/* Mode sombre : mêmes noms, autres valeurs. Ce bloc reste HORS de @theme. */
 .dark {
   color-scheme: dark;       /* barres de défilement et champs natifs en sombre */
-  --color-page: #14102b;
-  --color-surface: #1f1a40;
-  --color-ink: #ece8fb;
-  --color-line: #3a3166;
-  --color-muted: #a79dd0;
-  --color-link: #b8adf7;
+  --color-page: #1c1645;
+  --color-surface: #2a2160;
+  --color-ink: #f1edff;
+  --color-line: #4a3f8f;
+  --color-muted: #b6abe8;
+  --color-link: #c9bfff;
 }

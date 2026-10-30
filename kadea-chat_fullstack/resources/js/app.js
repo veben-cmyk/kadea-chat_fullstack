@@ -27,12 +27,12 @@ if (list) {
     const bubble = document.createElement('div')
     bubble.className =
       'max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] ' +
-      (isMine ? 'bg-brand-600 text-white' : 'border border-brand-100 bg-white text-brand-950')
+      (isMine ? 'bg-brand-600 text-white' : 'border border-line bg-surface text-ink')
 
     // Dans un groupe, on affiche le nom de l'expéditeur au-dessus des messages des autres
     if (!isMine && isGroup && message.senderName) {
       const name = document.createElement('p')
-      name.className = 'mb-0.5 text-xs font-bold text-brand-600'
+      name.className = 'mb-0.5 text-xs font-bold text-link'
       name.textContent = message.senderName
       bubble.append(name)
     }
@@ -43,7 +43,7 @@ if (list) {
     text.textContent = message.content
 
     const time = document.createElement('p')
-    time.className = 'mt-1 text-right text-[10px] ' + (isMine ? 'text-white/70' : 'text-brand-400')
+    time.className = 'mt-1 text-right text-[10px] ' + (isMine ? 'text-white/70' : 'text-muted')
     time.textContent = message.timeLabel
 
     bubble.append(text, time)

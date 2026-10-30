@@ -14,7 +14,7 @@
 @let(name = $props.get('name'))
 @let(type = $props.get('type') || 'text')
 <div class="group">
-  <label for="{{ name }}" class="mb-1 block text-sm font-medium text-brand-950">
+  <label for="{{ name }}" class="mb-1 block text-sm font-medium text-ink">
     {{ $props.get('label') }}
   </label>
 
@@ -27,9 +27,9 @@
     autocomplete="{{ $props.get('autocomplete') || 'off' }}"
     {{ $props.get('required') ? 'required' : '' }}
     aria-describedby="{{ name }}-error"
-    class="w-full rounded-lg border border-brand-400/60 bg-white 
-    px-3 py-2.5 text-sm text-brand-950 outline-none transition 
-    placeholder:text-brand-400 focus:border-brand-600 focus:ring-2 
+    class="w-full rounded-lg border border-brand-400/60 bg-surface 
+    px-3 py-2.5 text-sm text-ink outline-none transition 
+    placeholder:text-muted focus:border-brand-600 focus:ring-2 
     focus:ring-brand-600/20 group-has-[[data-error]]:border-red-500 group-has-[[data-error]]:ring-red-500/20">
 
   <div id="{{ name }}-error">

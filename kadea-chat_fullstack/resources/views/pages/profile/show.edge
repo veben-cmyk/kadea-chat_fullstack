@@ -11,17 +11,17 @@
 --}}
 @layouts.base({ title: 'Mon profil' })
   <div class="mx-auto w-full max-w-xl space-y-6 px-4 py-8">
-    <a href="{{ route('chat.index') }}" class="text-sm font-bold text-brand-600 hover:underline">
+    <a href="{{ route('chat.index') }}" class="text-sm font-bold text-link hover:underline">
       ← Retour aux discussions
     </a>
 
     <h1 class="font-display text-2xl font-bold">Mon profil</h1>
 
-   <section class="rounded-2xl bg-white p-6 text-center shadow-sm">
+   <section class="rounded-2xl bg-surface p-6 text-center shadow-sm">
   <div class="relative mx-auto h-28 w-28">
-    @!ui.avatar({ name: profileUser.fullName, url: profileUser.avatarUrl, size: 'lg', class: 'ring-4 ring-brand-100' })
+    @!ui.avatar({ name: profileUser.fullName, url: profileUser.avatarUrl, size: 'lg', class: 'ring-4 ring-line' })
 
-    <label for="avatar-file" class="absolute bottom-0 animate-pulse right-0 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-emerald-500  text-white shadow-md ring-2 ring-white hover:opacity-90" title="Changer la photo de profil" >
+    <label for="avatar-file" class="absolute bottom-0 animate-pulse right-0 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-emerald-500  text-white shadow-md ring-2 ring-surfacehover:opacity-90" title="Changer la photo de profil" >
       @!ui.icon({ name: 'camera', class: 'h-5 w-5' })
       <span class="sr-only">Changer la photo de profil</span>
     </label>
@@ -30,8 +30,8 @@
 
   <p class="mt-3 truncate font-display text-lg font-bold">{{ profileUser.fullName }}</p>
   {{-- L'e-mail est affiché mais non modifiable : le changer demanderait une nouvelle confirmation --}}
-  <p class="truncate text-sm text-brand-600">{{ profileUser.email }}</p>
-  <p class="mt-2 hidden text-xs text-brand-600" data-avatar-status role="status"></p>
+  <p class="truncate text-sm text-link">{{ profileUser.email }}</p>
+  <p class="mt-2 hidden text-xs text-link" data-avatar-status role="status"></p>
 
   {{-- Formulaire caché : app.js y met l'adresse de la photo envoyée à Cloudinary, puis l'envoie --}}
   <form id="avatar-form" method="POST" action="{{ route('profile.avatar') }}" class="hidden">
@@ -48,7 +48,7 @@
 </section>
 
     {{-- Informations : modifier le nom --}}
-<section class="rounded-2xl bg-white p-5 shadow-sm" aria-labelledby="info-title">
+<section class="rounded-2xl bg-surface p-5 shadow-sm" aria-labelledby="info-title">
   <h2 id="info-title" class="mb-3 font-display text-base font-bold">Informations</h2>
 
   <form method="POST" action="{{ route('profile.update') }}" data-loading novalidate class="space-y-4">
@@ -63,7 +63,7 @@
 </section>
 
     {{-- Mot de passe --}}
-    <section class="rounded-2xl bg-white p-5 shadow-sm" aria-labelledby="password-title">
+    <section class="rounded-2xl bg-surface p-5 shadow-sm" aria-labelledby="password-title">
       <h2 id="password-title" class="mb-3 font-display text-base font-bold">Mot de passe</h2>
       <form method="POST" action="{{ route('profile.password') }}" data-loading novalidate class="space-y-4">
         {{ csrfField() }}
@@ -76,11 +76,11 @@
       </form>
     </section>
 
-    <section class="rounded-2xl bg-white p-5 shadow-sm" aria-labelledby="theme-title">
+    <section class="rounded-2xl bg-surface p-5 shadow-sm" aria-labelledby="theme-title">
   <div class="flex items-center justify-between gap-3">
     <div>
       <h2 id="theme-title" class="font-display text-base font-bold">Apparence</h2>
-      <p class="text-xs text-brand-600">Thème clair ou sombre</p>
+      <p class="text-xs text-link">Thème clair ou sombre</p>
     </div>
     <button type="button" data-theme-toggle class="rounded-lg border border-brand-400/60 px-3 py-2 text-sm font-bold">
       Basculer le thème
@@ -89,7 +89,7 @@
     </section>
 
     {{-- Déconnexion --}}
-    <section class="rounded-2xl bg-white p-5 shadow-sm">
+    <section class="rounded-2xl bg-surface p-5 shadow-sm">
       <form method="POST" action="{{ route('logout') }}">
         {{ csrfField() }}
         <button type="submit" class="w-full rounded-lg border border-red-300 px-4 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-50">

@@ -10,7 +10,7 @@
 
   <div class="flex h-full flex-col">
     <header class="flex items-center gap-3 border-b border-brand-400/30 px-4 py-4">
-      <a href="{{ route('chat.show', { id: group.id }) }}" class="text-sm font-bold text-brand-600 hover:underline">← Retour</a>
+      <a href="{{ route('chat.show', { id: group.id }) }}" class="text-sm font-bold text-link hover:underline">← Retour</a>
       <h1 class="truncate font-display text-lg font-bold">{{ group.name }}</h1>
     </header>
 
@@ -20,11 +20,11 @@
         <h2 id="members-title" class="mb-2 text-sm font-bold">Membres ({{ members.length }})</h2>
         <ul class="space-y-2">
           @each(member in members)
-            <li class="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5">
+            <li class="flex items-center gap-3 rounded-xl bg-surface px-3 py-2.5">
               @!ui.avatar({ name: member.fullName, url: member.avatarUrl })
               <div class="min-w-0 flex-1">
                 <p class="truncate text-sm font-bold">{{ member.fullName }}{{ member.isMe ? ' (toi)' : '' }}</p>
-                <p class="truncate text-xs text-brand-600">{{ member.role === 'admin' ? 'Administrateur' : 'Membre' }}</p>
+                <p class="truncate text-xs text-link">{{ member.role === 'admin' ? 'Administrateur' : 'Membre' }}</p>
               </div>
 
               {{-- Retirer : visible seulement pour un admin, et jamais sur soi-même --}}
@@ -47,17 +47,17 @@
             <ul class="space-y-2">
               @each(person in candidates)
                 <li>
-                  <label class="flex cursor-pointer items-center gap-3 rounded-xl bg-white px-3 py-2.5 transition hover:bg-brand-400/20">
+                  <label class="flex cursor-pointer items-center gap-3 rounded-xl bg-surface px-3 py-2.5 transition hover:bg-brand-400/20">
                     <input type="checkbox" name="memberIds[]" value="{{ person.id }}" class="h-4 w-4 accent-brand-600">
                     @!ui.avatar({ name: person.fullName, url: person.avatarUrl })
                     <span class="min-w-0">
                       <span class="block truncate text-sm font-bold">{{ person.fullName }}</span>
-                      <span class="block truncate text-xs text-brand-600">{{ person.email }}</span>
+                      <span class="block truncate text-xs text-link">{{ person.email }}</span>
                     </span>
                   </label>
                 </li>
               @else
-                <li class="py-4 text-center text-sm text-brand-600">Tout le monde est déjà dans le groupe.</li>
+                <li class="py-4 text-center text-sm text-link">Tout le monde est déjà dans le groupe.</li>
               @end
             </ul>
             @if(candidates.length > 0)
