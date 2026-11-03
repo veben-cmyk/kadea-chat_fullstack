@@ -27,7 +27,6 @@
 
   {{-- h-dvh = hauteur réelle de l'écran (gère la barre d'adresse mobile) --}}
   <div class="flex h-dvh overflow-hidden">
-
     {{-- 1. Barre d'icônes verticale (ordinateur uniquement) --}}
     <nav class="hidden w-[72px] shrink-0 flex-col items-center justify-between bg-brand-400 py-4 text-white md:flex" aria-label="Navigation principale">
       <div class="flex flex-col items-center gap-6">
@@ -42,24 +41,25 @@
           class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
           @!ui.icon({ name: 'users', class: 'h-6 w-6' })
         </a>
-
-
       </div class="flex flex-col items-center gap-2">
 
-      {{-- theme toggle --}}
-      @!ui.themeToggle()
-      {{-- TODO : remplacer "#" par ta page de paramètres/profil quand elle existera --}}
-      <a href="{{ route('profile.show') }}" class="rounded-lg p-2 hover:bg-white/10" aria-label="Paramètres">
-        @!ui.icon({ name: 'settings', class: 'h-6 w-6' })
-      </a>
+      <div class="flex flex-col items-center gap-6">
+        {{-- theme toggle --}}
+        @!ui.themeToggle()
 
-      {{-- Déconnexion : un formulaire POST, avec le jeton CSRF --}}
-    <form method="POST" action="{{ route('logout') }}">
-      {{ csrfField() }}
-      <button type="submit" class="rounded-lg p-2 hover:bg-white/10" aria-label="Se déconnecter" title="Se déconnecter">
-        @!ui.icon({ name: 'logout', class: 'h-6 w-6' })
-      </button>
-    </form>
+        {{--  la page de paramètres/profil  --}}
+        <a href="{{ route('profile.show') }}" class="rounded-lg p-2 hover:bg-white/10" aria-label="Paramètres">
+          @!ui.icon({ name: 'settings', class: 'h-6 w-6' })
+        </a>
+
+        {{-- Déconnexion : un formulaire POST, avec le jeton CSRF --}}
+        <form method="POST" action="{{ route('logout') }}">
+          {{ csrfField() }}
+          <button type="submit" class="rounded-lg p-2 hover:bg-white/10" aria-label="Se déconnecter" title="Se déconnecter">
+            @!ui.icon({ name: 'logout', class: 'h-6 w-6' })
+          </button>
+        </form>
+      </div>
     </nav>
 
     {{-- 2. Colonne des discussions --}}
@@ -74,9 +74,6 @@
           @!ui.icon({ name: 'chat', class: 'h-6 w-6' })
         </a>
 
-        {{-- theme toggle --}}
-        @!ui.themeToggle()
-
         <a href="{{ route('chat.new') }}"
           class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
           @!ui.icon({ name: 'users', class: 'h-6 w-6' })
@@ -85,14 +82,13 @@
           @!ui.icon({ name: 'settings', class: 'h-6 w-6' })
         </a>
 
-          {{-- Déconnexion : un formulaire POST, avec le jeton CSRF --}}
-    <form method="POST" action="{{ route('logout') }}">
-      {{ csrfField() }}
-      <button type="submit" class="rounded-lg p-2 hover:bg-white/10" aria-label="Se déconnecter" title="Se déconnecter">
-        @!ui.icon({ name: 'logout', class: 'h-6 w-6' })
-      </button>
-    </form>
-
+        {{-- Déconnexion : un formulaire POST, avec le jeton CSRF --}}
+        <form method="POST" action="{{ route('logout') }}">
+          {{ csrfField() }}
+          <button type="submit" class="rounded-lg p-2 hover:bg-white/10" aria-label="Se déconnecter" title="Se déconnecter">
+            @!ui.icon({ name: 'logout', class: 'h-6 w-6' })
+          </button>
+        </form>
       </nav>
     </aside>
 
