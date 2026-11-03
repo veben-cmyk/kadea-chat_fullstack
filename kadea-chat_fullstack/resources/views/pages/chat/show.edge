@@ -13,18 +13,17 @@
   @slot('sidebar')
     @!chat.sidebar({ conversations: conversations, activeId: conversation.id })
   @end
-
+  
   @!chat.conversationHeader({ conversation: conversation })
 
   {{-- Zone des messages. id="messages" -> app.js la fait défiler tout en bas. --}}
   <div
-  id="messages"
-  data-conversation-id="{{ conversation.id }}"
-  data-current-user-id="{{ currentUserId }}"
-  data-is-group="{{ conversation.isGroup }}"
-  class="flex-1 space-y-3 overflow-y-auto px-4 py-4"
-  aria-live="polite"
-  >
+    id="messages"
+    data-conversation-id="{{ conversation.id }}"
+    data-current-user-id="{{ currentUserId }}"
+    data-is-group="{{ conversation.isGroup }}"
+    class="flex-1 space-y-3 overflow-y-auto px-4 py-4"
+    aria-live="polite">
 
     {{-- SQUELETTE : affiché par showSkeleton('messages') pendant un fetch --}}
     <div data-skeleton="messages" class="hidden space-y-3">

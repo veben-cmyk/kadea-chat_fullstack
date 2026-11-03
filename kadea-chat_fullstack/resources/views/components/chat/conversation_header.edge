@@ -24,6 +24,12 @@
       <p class="text-xs text-muted">{{ c.statusText || '' }}</p>
     @end
   </div>
+  {{-- Zone d'actions à droite --}}
+  <div class="flex items-center gap-2">
+    {{-- Bouton Toggle Theme --}}
+    @ui.themeToggle({ class: 'md:hidden' })
+    @end
+  </div>
 
   {{-- Visible seulement dans un groupe --}}
   @if(c.isGroup)

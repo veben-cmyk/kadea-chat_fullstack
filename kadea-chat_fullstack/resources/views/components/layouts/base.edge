@@ -26,8 +26,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet">
 
     <script>
-  // Lit le thème enregistré (ou la préférence du système) et le pose sur <html>
-  // AVANT que la page s'affiche, sinon un éclair blanc apparaît au chargement.
+    // Lit le thème enregistré (ou la préférence du système) et le pose sur <html>
+    // AVANT que la page s'affiche, sinon un éclair blanc apparaît au chargement.
         try {
             const saved = localStorage.getItem('theme')
             const dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -39,7 +39,7 @@
 </head>
 <body class="h-full bg-page font-sans text-ink antialiased">
     {{-- Barre de progression : pilotée par app.js (voir startProgress) --}}
-        <div id="top-progress" class="fixed inset-x-0 top-0 z-50 h-1 origin-left scale-x-0 bg-accent opacity-0"></div>
+    <div id="top-progress" class="fixed inset-x-0 top-0 z-50 h-1 origin-left scale-x-0 bg-accent opacity-0"></div>
 
     {{-- Messages flash (succès / erreur envoyés par les contrôleurs) --}}
     @!ui.flash()
