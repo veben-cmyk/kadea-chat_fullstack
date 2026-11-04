@@ -8,7 +8,7 @@
 |                     l'utilisateur avait tapé (sauf les mots de passe).
 |  2. @inputError   : affiche le(s) message(s) d'erreur de VineJS pour CE champ.
 |  3. Bordure rouge : le <p data-error> rend la bordure rouge grâce à la classe
-|                     Tailwind "group-has-[[data-error]]:border-red-500"
+|                     Tailwind "group-has-[[data-error]]:border-danger"
 |                     (= "si un enfant du groupe a data-error, alors rouge").
 --}}
 @let(name = $props.get('name'))
@@ -30,12 +30,12 @@
     class="w-full rounded-lg border border-brand-400/60 bg-surface 
     px-3 py-2.5 text-sm text-ink outline-none transition 
     placeholder:text-muted focus:border-brand-600 focus:ring-2 
-    focus:ring-brand-600/20 group-has-[[data-error]]:border-red-500 group-has-[[data-error]]:ring-red-500/20">
+    focus:ring-brand-600/20 group-has-[[data-error]]:border-danger group-has-[[data-error]]:ring-danger/20">
 
   <div id="{{ name }}-error">
     @inputError(name)
       @each(message in $messages)
-        <p data-error class="mt-1 text-sm text-red-600" role="alert">{{ message }}</p>
+        <p data-error class="mt-1 text-sm text-danger" role="alert">{{ message }}</p>
       @end
     @end
   </div>

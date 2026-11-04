@@ -9,7 +9,7 @@
 @let(c = $props.get('conversation'))
 <a
   href="{{ route('chat.show', { id: c.id }) }}"
-  class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-brand-400/30 {{ $props.get('active') ? 'bg-brand-400/50' : '' }}"
+  class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-white/10 {{ $props.get('active') ? 'bg-white/15' : '' }}"
   {{ $props.get('active') ? 'aria-current=page' : '' }}
 >
   @!ui.avatar({ name: c.title, url: c.avatarUrl })

@@ -1,13 +1,4 @@
-{{--
-| ui/avatar.edge : pastille ronde avec les initiales (ou la photo si elle existe)
-| Props :
-|   name -> "Chris Mande" donne "CM"
-|   url  -> adresse de la photo (optionnel)
-|   size -> 'sm' | 'md' | 'lg'  (défaut : md)
-|
-| La couleur (orange ou gris-violet) dépend de la longueur du nom : ainsi un
-| même utilisateur garde toujours la même couleur, sans rien stocker.
---}}
+
 
 {{--
 | ui/avatar.edge : rond avec la photo, ou l'initiale du nom s'il n'y a pas de photo
@@ -15,13 +6,14 @@
 --}}
 @let(name = $props.get('name') || '?')
 @let(size = $props.get('size') || 'md')
-{{-- Les classes sont écrites en entier : Tailwind ne génère que ce qu'il trouve dans le code --}}
+
 @let(box = size === 'lg' ? 'h-28 w-28 text-4xl' : (size === 'sm' ? 'h-8 w-8 text-xs' : 'h-10 w-10 text-sm'))
+@let(colors = ['bg-[#0369a1]', 'bg-[#9f1239]', 'bg-[#0f766e]', 'bg-[#475569]', 'bg-[#854d0e]'])
 
 @if($props.get('url'))
   <img src="{{ $props.get('url') }}" alt="" class="{{ box }} shrink-0 rounded-full object-cover {{ $props.get('class') || '' }}">
 @else
-  <span class="{{ box }} flex shrink-0 items-center justify-center rounded-full bg-accent font-bold uppercase text-white {{ $props.get('class') || '' }}" aria-hidden="true">
+  <span class="{{ box }} flex shrink-0 items-center justify-center rounded-full {{ colors[name.length % colors.length] }} font-bold uppercase text-white {{ $props.get('class') || '' }}" aria-hidden="true">
     {{ name.charAt(0) }}
   </span>
 @end

@@ -44,12 +44,12 @@
             @else
               <li class="py-6 text-center text-sm text-link">Aucun autre utilisateur pour le moment.</li>
             @end
-          </ul>
+          </ul> 
 
           {{-- Erreur si aucune case n'est cochée --}}
           @inputError('memberIds')
             @each(message in $messages)
-              <p data-error class="mt-2 text-sm text-red-600" role="alert">{{ message }}</p>
+              <p data-error class="mt-2 text-sm text-danger" role="alert">{{ message }}</p>
             @end
           @end
         </fieldset>

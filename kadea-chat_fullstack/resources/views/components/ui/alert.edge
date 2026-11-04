@@ -5,8 +5,8 @@
 --}}
 @let(type = $props.get('type') || 'error')
 @let(styles = {
-    error: 'border-red-300 bg-red-50 text-red-800',
-    success: 'border-green-300 bg-green-50 text-green-800',
+    error: 'border-danger/40 bg-danger/10 text-ink',
+    success: 'border-success/40 bg-success/10 text-ink',
     info: 'border-line bg-surface text-ink'
 })
 <div role="{{ type === 'error' ? 'alert' : 'status' }}" class="rounded-lg border px-4 py-3 text-sm {{ styles[type] }}">

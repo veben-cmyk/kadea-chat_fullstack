@@ -31,7 +31,7 @@
               @if(isAdmin && !member.isMe)
                 <form method="POST" action="{{ route('groups.members.remove', { id: group.id, userId: member.id }) }}">
                   {{ csrfField() }}
-                  <button type="submit" class="rounded-lg px-2 py-1 text-xs font-bold text-red-600 hover:bg-red-50">Retirer</button>
+                  <button type="submit" class="rounded-lg px-2 py-1 text-xs font-bold text-danger hover:bg-danger/10">Retirer</button>
                 </form>
               @end
             </li>

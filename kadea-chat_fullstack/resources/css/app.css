@@ -9,7 +9,7 @@
 @theme {
   --color-brand-50: #f2effc;   /* fond clair (formulaires, zone de messages) */
   --color-brand-100: #e4def8;  /* bordures claires */
-  --color-brand-400: #8b7db8;  /* barre latérale gauche, éléments secondaires */
+  --color-brand-400: #8b7db8;  /* bordures et survols */
   --color-brand-600: #4a3baf;  /* bulles envoyées, liens */
   --color-brand-950: #2d245c;  /* fond sombre principal */
   --color-accent: #f6a93b;     /* orange : boutons, logo */
@@ -21,8 +21,13 @@
   --color-surface: #ffffff;  /* cartes, en-têtes, champs, bulles reçues */
   --color-ink: #2d245c;      /* texte principal */
   --color-line: #e4def8;     /* bordures */
-  --color-muted: #8b7db8;    /* heures, textes secondaires */
+  --color-muted: #6b5ca5;    /* heures, textes secondaires */
   --color-link: #4a3baf;     /* liens */
+  --color-rail: #231b4d;     /* barre latérale gauche d'icones */
+  --color-success: #15803d;   /* « en ligne », les messages de succès */
+  --color-danger: #dc2626;    /* messages d'erreur */
+  --color-sidebar: #2d245c;  /* colonne des discussions */
+
 
   --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
@@ -37,4 +42,8 @@
   --color-line: #4a3f8f;
   --color-muted: #b6abe8;
   --color-link: #c9bfff;
+  --color-rail: #0f0b26; /*encore plus sombre que le fond, pour garder la profondeur*/
+  --color-success: #4ade80;   /* un vert plus clair, sinon il serait illisible sur fond foncé */
+  --color-danger: #f87171;    /* messages d'erreur */
+  --color-sidebar: #17123a;  /* fond colonne des discussions  */
 }
