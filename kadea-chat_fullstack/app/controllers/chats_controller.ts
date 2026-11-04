@@ -123,13 +123,21 @@ export default class ChatController {
       return response.redirect().toRoute('chat.index')
     }
 
-    // 2. Titre et avatar : même logique que la sidebar
+        // 2. Les infos de l'en-tête, envoyées à chat/conversation_header.edge
+    //    "other" = l'autre personne dans une discussion privée (1v1).
+    //    Les membres sont déjà chargés par le preload() de l'étape 1 :
+    //    pas besoin d'une nouvelle requête à la base.
     const other = row.members.find((member) => member.userId !== user.id)?.user
     const conversation = {
       id: row.id,
+      // Groupe : son nom. Discussion privée : le nom de l'autre personne.
       title: row.isGroup ? (row.name ?? 'Groupe') : (other?.fullName ?? 'Utilisateur'),
+      // Un groupe n'a pas de photo : l'avatar affichera l'initiale.
       avatarUrl: row.isGroup ? null : (other?.avatarUrl ?? null),
       isGroup: row.isGroup,
+      // Nombre de participants, affiché sous le nom du groupe ("3 membres").
+      // Sans cette ligne, la vue lisait une propriété inexistante -> "undefined".
+      memberCount: row.members.length,
     }
 
     // 3. Les messages, du plus ancien au plus récent

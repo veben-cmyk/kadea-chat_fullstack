@@ -1,25 +1,54 @@
 {{--
-| ui/flash.edge : notifications "toast" en haut à droite
+| ui/flash.edge : notifications "toast" qui flottent au-dessus de la page
 |
 | Un "message flash" est un message stocké dans la session pour UNE seule
 | page, puis effacé. Dans un contrôleur tu écris par exemple :
 |     session.flash('success', 'Compte créé, bienvenue !')
 |     session.flash('error', 'Impossible d\'envoyer le message.')
-| et il apparaît ici, puis disparaît seul après 6 s (voir app.js).
 |
-| flashMessages est fourni par @adonisjs/session : rien à importer.
+| Appelé une seule fois, dans layouts/base.edge : vaut pour TOUTES les pages.
+|
+| POSITION : en haut à droite sur tous les écrans (en bas, sur mobile, il
+| cacherait le formulaire de message). "fixed" : il flotte au-dessus de la
+| page sans rien déplacer.
+|
+| FOND OPAQUE : ui.alert a un fond transparent (bg-success/10...). Un toast
+| flotte au-dessus d'autres éléments : on les verrait à travers. Chaque
+| alerte est donc posée sur un fond opaque (bg-surface).
+|
+| DISPARITION (gérée par app.js) :
+|   - automatique après 6 s : app.js ajoute "opacity-0" au conteneur
+|     [data-flash], "transition-opacity" rend le fondu progressif ;
+|   - immédiate avec le bouton [data-flash-close] de chaque toast.
 --}}
 @if(flashMessages.has('success') || flashMessages.has('error'))
-  <div class="fixed right-4 top-4 z-50 w-[min(24rem,calc(100%-2rem))] space-y-2" data-flash>
+  <div class="fixed right-4 top-4 z-50 w-[min(24rem,calc(100%-2rem))] space-y-2 transition-opacity duration-500" data-flash>
     @if(flashMessages.has('success'))
-      @ui.alert({ type: 'success' })
-        {{ flashMessages.get('success') }}
-      @end
+      {{-- data-toast : app.js retire CE toast quand on clique sur son bouton --}}
+      <div class="relative rounded-lg bg-surface shadow-lg" data-toast>
+        @ui.alert({ type: 'success' })
+          {{-- pr-6 : laisse la place au bouton × à droite --}}
+          <span class="block pr-6">{{ flashMessages.get('success') }}</span>
+        @end
+        <button type="button" class="absolute right-2 top-2 rounded p-1 text-muted hover:text-ink" aria-label="Fermer la notification" data-flash-close>
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
     @end
+
     @if(flashMessages.has('error'))
-      @ui.alert({ type: 'error' })
-        {{ flashMessages.get('error') }}
-      @end
+      <div class="relative rounded-lg bg-surface shadow-lg" data-toast>
+        @ui.alert({ type: 'error' })
+          <span class="block pr-6">{{ flashMessages.get('error') }}</span>
+        @end
+        <button type="button" class="absolute right-2 top-2 rounded p-1 text-muted hover:text-ink" aria-label="Fermer la notification" data-flash-close>
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
     @end
   </div>
 @end

@@ -156,3 +156,38 @@ document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
     } catch (error) {}
   })
 })
+
+// --- Toasts (messages flash) : disparition automatique + bouton × ---
+// Le conteneur [data-flash] n'existe que si le contrôleur a envoyé un message
+// (voir ui/flash.edge). Sur toutes les autres pages, "flash" vaut null
+// et ce bloc ne fait rien.
+const flash = document.querySelector('[data-flash]')
+
+if (flash) {
+  // Fait disparaître le conteneur en douceur, puis le retire de la page.
+  // 1. "opacity-0" lance le fondu (transition-opacity est déjà dans flash.edge)
+  // 2. après 500 ms, la durée du fondu, on retire l'élément pour qu'il ne
+  //    bloque plus les clics sur ce qui est en dessous
+  const hideFlash = () => {
+    flash.classList.add('opacity-0')
+    setTimeout(() => flash.remove(), 500)
+  }
+
+  // Disparition automatique après 6 secondes
+  const timer = setTimeout(hideFlash, 6000)
+
+  // Bouton × : ferme SON toast tout de suite
+  flash.querySelectorAll('[data-flash-close]').forEach((button) => {
+    button.addEventListener('click', () => {
+      // closest() remonte jusqu'au toast qui contient ce bouton
+      button.closest('[data-toast]').remove()
+
+      // S'il ne reste plus aucun toast, on retire aussi le conteneur
+      // et on annule le minuteur, devenu inutile
+      if (!flash.querySelector('[data-toast]')) {
+        clearTimeout(timer)
+        flash.remove()
+      }
+    })
+  })
+}
