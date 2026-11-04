@@ -19,7 +19,7 @@
     @if(c.isGroup)
       <p class="text-xs text-muted">{{ c.memberCount }} membres</p>
     @elseif(c.isOnline)
-      <p class="text-xs font-medium text-green-600">en ligne</p>
+      <p class="text-xs font-medium text-success">en ligne</p>
     @else
       <p class="text-xs text-muted">{{ c.statusText || '' }}</p>
     @end

@@ -21,14 +21,14 @@
 
 @layouts.base({ title: $props.get('title') })
   {{-- Bannière "connexion perdue" : cachée par défaut, affichée par app.js --}}
-  <div id="offline-banner" class="hidden bg-red-600 px-4 py-2 text-center text-sm font-medium text-white" role="alert">
+  <div id="offline-banner" class="hidden bg-danger dark:text-brand-950 px-4 py-2 text-center text-sm font-medium text-white" role="alert">
     Connexion perdue. Tes messages seront envoyés dès que le réseau revient.
   </div>
 
   {{-- h-dvh = hauteur réelle de l'écran (gère la barre d'adresse mobile) --}}
   <div class="flex h-dvh overflow-hidden">
     {{-- 1. Barre d'icônes verticale (ordinateur uniquement) --}}
-    <nav class="hidden w-[72px] shrink-0 flex-col items-center justify-between bg-brand-400 py-4 text-white md:flex" aria-label="Navigation principale">
+    <nav class="hidden w-[72px] shrink-0 flex-col items-center justify-between bg-rail py-4 text-white md:flex" aria-label="Navigation principale">
       <div class="flex flex-col items-center gap-6">
         <a href="{{ route('chat.index') }}" aria-label="Kadea Chat">
           @!ui.logo({ size: 'sm', withText: false })
@@ -41,7 +41,7 @@
           class="rounded-lg p-2 hover:bg-white/10" aria-label="Discussions" aria-current="page">
           @!ui.icon({ name: 'users', class: 'h-6 w-6' })
         </a>
-      </div class="flex flex-col items-center gap-2">
+      </div>
 
       <div class="flex flex-col items-center gap-6">
         {{-- theme toggle --}}
@@ -63,13 +63,13 @@
     </nav>
 
     {{-- 2. Colonne des discussions --}}
-    <aside class="{{ view === 'list' ? 'flex' : 'hidden md:flex' }} min-w-0 flex-1 flex-col bg-brand-950 md:w-80 md:flex-none">
+    <aside class="{{ view === 'list' ? 'flex' : 'hidden md:flex' }} min-w-0 flex-1 flex-col bg-sidebar md:w-80 md:flex-none">
       <div class="min-h-0 flex-1">
         {{{ await $slots.sidebar() }}}
       </div>
 
       {{-- Barre du bas (mobile uniquement, et seulement sur l'écran "liste") --}}
-      <nav class="flex items-center justify-around bg-brand-400 py-3 text-white md:hidden" aria-label="Navigation principale">
+      <nav class="flex items-center justify-around bg-rail py-3 text-white md:hidden" aria-label="Navigation principale">
         <a href="{{ route('chat.index') }}" class="rounded-lg p-2" aria-label="Discussions">
           @!ui.icon({ name: 'chat', class: 'h-6 w-6' })
         </a>

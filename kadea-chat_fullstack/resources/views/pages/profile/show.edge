@@ -20,7 +20,7 @@
     <div class="relative mx-auto h-28 w-28">
       @!ui.avatar({ name: profileUser.fullName, url: profileUser.avatarUrl, size: 'lg', class: 'ring-4 ring-line' })
 
-      <label for="avatar-file" class="absolute bottom-0 animate-pulse right-0 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-emerald-500  text-white shadow-md ring-2 ring-surfacehover:opacity-90" title="Changer la photo de profil" >
+      <label for="avatar-file" class="absolute bottom-0 right-0 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-accent  text-brand-950 shadow-md ring-2 ring-surface hover:opacity-90" title="Changer la photo de profil" >
         @!ui.icon({ name: 'camera', class: 'h-5 w-5' })
         <span class="sr-only">Changer la photo de profil</span>
       </label>
@@ -41,7 +41,7 @@
     @if(profileUser.avatarUrl)
       <form method="POST" action="{{ route('profile.avatar.destroy') }}" class="mt-2">
         {{ csrfField() }}
-        <button type="submit" class="text-xs text-red-600 hover:underline">Supprimer la photo</button>
+        <button type="submit" class="text-xs text-danger hover:underline">Supprimer la photo</button>
       </form>
     @end
   </section>
@@ -92,7 +92,7 @@
   <section class="rounded-2xl bg-surface p-5 shadow-sm">
     <form method="POST" action="{{ route('logout') }}">
       {{ csrfField() }}
-      <button type="submit" class="w-full rounded-lg border border-red-300 px-4 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-50">
+      <button type="submit" class="w-full rounded-lg border border-danger/40 px-4 py-2.5 text-sm font-bold text-danger transition hover:bg-danger/10" aria-label="Se déconnecter" title="Se déconnecter">
         Se déconnecter
       </button>
     </form>
