@@ -16,7 +16,7 @@ le JavaScript regarde si elle est déjà dans la page.  --}}
 <div data-message-id="{{ m.id }}" class="flex {{ m.isMine ? 'justify-end' : 'justify-start' }}">
   <div class="max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] {{ m.isMine ? 'bg-brand-600 text-white' : 'border border-line bg-surface text-ink' }}">
     @if(!m.isMine && $props.get('isGroup') && m.senderName)
-      <p class="mb-0.5 text-xs font-bold text-link">{{ m.senderName }}</p>
+      <p class="mb-0.5 text-xs font-bold text-muted">{{ m.senderName }}</p>
     @end
 
     {{-- data-message-text : app.js s'en sert pour remplacer le texte quand le message est supprimé --}}

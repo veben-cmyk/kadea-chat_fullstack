@@ -24,7 +24,7 @@
               @!ui.avatar({ name: member.fullName, url: member.avatarUrl })
               <div class="min-w-0 flex-1">
                 <p class="truncate text-sm font-bold">{{ member.fullName }}{{ member.isMe ? ' (toi)' : '' }}</p>
-                <p class="truncate text-xs text-link">{{ member.role === 'admin' ? 'Administrateur' : 'Membre' }}</p>
+                <p class="truncate text-xs text-muted">{{ member.role === 'admin' ? 'Administrateur' : 'Membre' }}</p>
               </div>
 
               {{-- Retirer : visible seulement pour un admin, et jamais sur soi-même --}}
@@ -52,12 +52,12 @@
                     @!ui.avatar({ name: person.fullName, url: person.avatarUrl })
                     <span class="min-w-0">
                       <span class="block truncate text-sm font-bold">{{ person.fullName }}</span>
-                      <span class="block truncate text-xs text-link">{{ person.email }}</span>
+                      <span class="block truncate text-xs text-muted">{{ person.email }}</span>
                     </span>
                   </label>
                 </li>
               @else
-                <li class="py-4 text-center text-sm text-link">Tout le monde est déjà dans le groupe.</li>
+                <li class="py-4 text-center text-sm text-muted">Tout le monde est déjà dans le groupe.</li>
               @end
             </ul>
             @if(candidates.length > 0)

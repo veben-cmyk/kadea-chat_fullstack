@@ -29,8 +29,8 @@
 
     <p class="mt-3 truncate font-display text-lg font-bold">{{ profileUser.fullName }}</p>
     {{-- L'e-mail est affiché mais non modifiable : le changer demanderait une nouvelle confirmation --}}
-    <p class="truncate text-sm text-link">{{ profileUser.email }}</p>
-    <p class="mt-2 hidden text-xs text-link" data-avatar-status role="status"></p>
+    <p class="truncate text-sm text-muted">{{ profileUser.email }}</p>
+    <p class="mt-2 hidden text-xs text-muted" data-avatar-status role="status"></p>
 
     {{-- Formulaire caché : app.js y met l'adresse de la photo envoyée à Cloudinary, puis l'envoie --}}
     <form id="avatar-form" method="POST" action="{{ route('profile.avatar') }}" class="hidden">
@@ -79,7 +79,7 @@
       <div class="flex items-center justify-between gap-3">
       <div>
         <h2 id="theme-title" class="font-display text-base font-bold">Apparence</h2>
-        <p class="text-xs text-link">Thème clair ou sombre</p>
+        <p class="text-xs text-muted">Thème clair ou sombre</p>
       </div>
     {{-- Zone d'actions à droite --}}
   

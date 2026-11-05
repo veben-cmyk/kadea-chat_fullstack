@@ -41,13 +41,13 @@
                     @!ui.avatar({ name: person.fullName, url: person.avatarUrl })
                         <span class="min-w-0">
                         <span class="block truncate text-sm font-bold">{{ person.fullName }}</span>
-                        <span class="block truncate text-xs text-link">{{ person.email }}</span>
+                        <span class="block truncate text-xs text-muted">{{ person.email }}</span>
                         </span>
                     </button>
                 </form>
             </li>
         @else
-            <li class="py-10 text-center text-sm text-link">
+            <li class="py-10 text-center text-sm text-muted">
                 @if(search)
                     Aucune personne ne correspond à « {{ search }} ».
                 @else

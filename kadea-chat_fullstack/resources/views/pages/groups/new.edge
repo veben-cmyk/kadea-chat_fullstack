@@ -37,12 +37,12 @@
                   @!ui.avatar({ name: person.fullName, url: person.avatarUrl })
                   <span class="min-w-0">
                     <span class="block truncate text-sm font-bold">{{ person.fullName }}</span>
-                    <span class="block truncate text-xs text-link">{{ person.email }}</span>
+                    <span class="block truncate text-xs text-muted">{{ person.email }}</span>
                   </span>
                 </label>
               </li>
             @else
-              <li class="py-6 text-center text-sm text-link">Aucun autre utilisateur pour le moment.</li>
+              <li class="py-6 text-center text-sm text-muted">Aucun autre utilisateur pour le moment.</li>
             @end
           </ul> 
 
