@@ -109,8 +109,7 @@ export default class ChatController {
     const user = auth.user!
 
     // 1. Charger la conversation, À CONDITION que je sois membre.
-    // Sans le whereHas, n'importe qui pourrait lire n'importe quelle
-    // conversation en changeant le numéro dans l'adresse.
+    // Sans le whereHas, n'importe qui pourrait lire n'importe quelle conversation en changeant le numéro dans l'adresse.
     const row = await Conversation.query()
       .where('id', params.id)
       .whereHas('members', (query) => query.where('userId', user.id))
@@ -124,9 +123,8 @@ export default class ChatController {
     }
 
         // 2. Les infos de l'en-tête, envoyées à chat/conversation_header.edge
-    //    "other" = l'autre personne dans une discussion privée (1v1).
-    //    Les membres sont déjà chargés par le preload() de l'étape 1 :
-    //    pas besoin d'une nouvelle requête à la base.
+        // "other" = l'autre personne dans une discussion privée (1v1).
+    // Les membres sont déjà chargés par le preload() de l'étape 1 :
     const other = row.members.find((member) => member.userId !== user.id)?.user
     const conversation = {
       id: row.id,

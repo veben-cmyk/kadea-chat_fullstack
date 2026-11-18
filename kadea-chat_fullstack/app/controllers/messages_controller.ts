@@ -95,6 +95,8 @@ export default class MessagesController {
         // Prévient les autres navigateurs ouverts sur cette conversation
         transmit.broadcast(`conversations/${params.id}`, { isDeleted: true, id: message.id })
 
+        session.flash('success', 'Message supprimé.')
+
         return response.redirect().toRoute('chat.show', { id: params.id })
     }
 }

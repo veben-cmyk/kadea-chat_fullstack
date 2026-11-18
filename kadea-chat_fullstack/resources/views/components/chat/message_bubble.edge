@@ -29,7 +29,8 @@ le JavaScript regarde si elle est déjà dans la page.  --}}
     <div class="mt-1 flex items-center justify-end gap-2 text-[10px] {{ m.isMine ? 'text-white/70' : 'text-muted' }}">
       {{-- Supprimer : seulement sur MES messages non supprimés --}}
       @if(m.isMine && !m.isDeleted)
-        <form data-delete-form method="POST" action="{{ route('messages.destroy', { id: $props.get('conversationId'), messageId: m.id }) }}">
+        <form data-delete-form method="POST" onsubmit="return confirm('Supprimer ce message ? Cette action est définitive.')"
+          action="{{ route('messages.destroy', { id: $props.get('conversationId'), messageId: m.id }) }}">
           {{ csrfField() }}
           <button type="submit" class="hover:underline" aria-label="Supprimer ce message">Supprimer</button>
         </form>

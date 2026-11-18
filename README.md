@@ -220,11 +220,7 @@ L'application est alors disponible sur `http://localhost:3333`.
 - Palette et contrastes pensés pour le **confort visuel**, avec un mode sombre
 - Typographies : **Bricolage Grotesque** pour les titres, **Atkinson Hyperlegible** pour le texte (lisibilité maximale)
 - Maquettes réalisées sur Figma : accueil, inscription, connexion, messagerie sur ordinateur et téléphone 
-- Lien de la maquette: https://www.figma.com/design/RKODxbVzzb0moaig7qWsXT/kadea-chat_fullstack?node-id=0-1&t=93RprNq9pWWtLdLV-1
-
----
-
-
+- [Lien de la maquette](https://www.figma.com/design/RKODxbVzzb0moaig7qWsXT/kadea-chat_fullstack?node-id=0-1&t=93RprNq9pWWtLdLV-1)
 
 ---
 

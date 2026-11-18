@@ -1,11 +1,28 @@
-
-
 {{--
-| ui/avatar.edge : rond avec la photo, ou l'initiale du nom s'il n'y a pas de photo
+| ui/avatar.edge : rond avec la photo, ou les initiales s'il n'y a pas de photo
 | Props : name, url (optionnel), size ('sm' | 'md' | 'lg', défaut 'md'), class (optionnel)
+|
+| INITIALES
+|   "Isaac Veben"        -> "IV" (première lettre du premier et du dernier mot)
+|   "Jean Paul Mukendi"  -> "JM"
+|   "isaac"              -> "I"  (un seul mot : une seule lettre)
+|   Le texte est mis en majuscules par la classe "uppercase".
+|   On calcule ici, et pas avec user.initials, car l'avatar sert aussi
+|   pour les groupes : il ne reçoit qu'un nom, pas un utilisateur.
+|
+| COULEUR
+|   Choisie selon la longueur du nom, parmi des classes écrites en entier :
+|   Tailwind lit le code comme du texte, il ne trouverait pas une classe
+|   construite par concaténation. Un même nom garde toujours la même couleur.
 --}}
-@let(name = $props.get('name') || '?')
+@let(name = ($props.get('name') || '?').trim())
 @let(size = $props.get('size') || 'md')
+
+{{-- split(/\s+/) découpe aux espaces, même s'il y en a plusieurs à la suite --}}
+@let(words = name.split(/\s+/))
+@let(initials = words.length >= 2
+  ? words[0].charAt(0) + words[words.length - 1].charAt(0)
+  : words[0].charAt(0))
 
 @let(box = size === 'lg' ? 'h-28 w-28 text-4xl' : (size === 'sm' ? 'h-8 w-8 text-xs' : 'h-10 w-10 text-sm'))
 @let(colors = ['bg-[#0369a1]', 'bg-[#9f1239]', 'bg-[#0f766e]', 'bg-[#475569]', 'bg-[#854d0e]'])
@@ -14,6 +31,6 @@
   <img src="{{ $props.get('url') }}" alt="" class="{{ box }} shrink-0 rounded-full object-cover {{ $props.get('class') || '' }}">
 @else
   <span class="{{ box }} flex shrink-0 items-center justify-center rounded-full {{ colors[name.length % colors.length] }} font-bold uppercase text-white {{ $props.get('class') || '' }}" aria-hidden="true">
-    {{ name.charAt(0) }}
+    {{ initials }}
   </span>
 @end

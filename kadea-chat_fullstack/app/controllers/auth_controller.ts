@@ -9,7 +9,6 @@ import Token from '#models/token'
 import { registerValidator } from '#validators/register'
 import VerifyEmail from '#mails/verify_email_notification'
 
-//  Adapte le chemin :  le fichier du kit qui contient loginValidator
 import { errors } from '@adonisjs/auth'
 import { loginValidator } from '#validators/user'
 
@@ -38,14 +37,14 @@ export default class AuthController {
     // 3. Compte et token créés ensemble : si l'un échoue, aucun des deux n'existe
         const user = await db.transaction(async (trx) => {
 
-            const newUser = await User.create(payload, { client: trx })
+        const newUser = await User.create(payload, { client: trx })
 
         await Token.create(
             {
                 userId: newUser.id,
-            type: EMAIL_CONFIRMATION,
-            tokenHash: hashToken(token),
-            expiresAt: DateTime.now().plus({ hours: 24 }),
+                type: EMAIL_CONFIRMATION,
+                tokenHash: hashToken(token), // Le token haché va en base, jamais en clair !
+                expiresAt: DateTime.now().plus({ hours: 24 }), // Valide 24h
             },
             {
             client: trx,
@@ -55,10 +54,10 @@ export default class AuthController {
         return newUser
     })
 
-    // 4. Lien de confirmation (APP_URL est validée au démarrage, pas de valeur de repli)
+    // 4. Lien de confirmation (Construction de l'URL de confirmation)
     const verificationUrl = `${env.get('APP_URL')}/verify-email/${token}`
 
-    // Pratique pour tester en local, jamais affiché en production
+    // Pratique pour tester en local (on évite d'ouvrir sa boîte mail à chaque test)
     if (env.get('NODE_ENV') === 'development') {
         console.log('Lien de confirmation :', verificationUrl)
     }
@@ -87,10 +86,10 @@ export default class AuthController {
     // ne peuvent pas le valider deux fois.
     const confirmed = await db.transaction(async (trx) => {
         const storedToken = await Token.query({ client: trx })
-        .where('tokenHash', tokenHash)
-        .where('type', EMAIL_CONFIRMATION)
-        .whereNull('usedAt')
-        .where('expiresAt', '>', DateTime.now().toJSDate())
+        .where('tokenHash', tokenHash) // Doit correspondre à l'empreinte
+        .where('type', EMAIL_CONFIRMATION) // Doit être un token de confirmation d'email
+        .whereNull('usedAt') // Ne doit JAMAIS avoir été utilisé
+        .where('expiresAt', '>', DateTime.now().toJSDate()) // La date d'expiration doit être dans le futur
         .forUpdate()
         .first()
 
@@ -101,8 +100,9 @@ export default class AuthController {
 
         const user = await User.findOrFail(storedToken.userId, { client: trx })
         user.isEmailConfirmed = true
-        storedToken.usedAt = DateTime.now()
+        storedToken.usedAt = DateTime.now() // On marque le token comme utilisé pour qu'il soit inutilisable à l'avenir
 
+        // Sauvegarde des deux enregistrements
         await user.save()
         await storedToken.save()
 
