@@ -364,3 +364,27 @@ if (flash) {
     })
   })
 }
+
+// --- Bannière "connexion perdue" ---
+// La bannière #offline-banner est dans layouts/app.edge : elle existe sur toutes
+// les pages de l'appli (chat, profil...), donc ce bloc est HORS du "if (list)".
+const offlineBanner = document.getElementById('offline-banner')
+
+if (offlineBanner) {
+  // Affiche ou cache la bannière selon l'état du réseau.
+  // classList.toggle('hidden', condition) :
+  //   - condition vraie -> ajoute "hidden" (bannière cachée)
+  //   - condition fausse -> retire "hidden" (bannière visible)
+  // Ici : connecté (navigator.onLine = true) -> cachée ; hors ligne -> visible.
+  const updateOfflineBanner = () => {
+    offlineBanner.classList.toggle('hidden', navigator.onLine)
+  }
+
+  // Le navigateur prévient quand la connexion tombe ou revient
+  window.addEventListener('offline', updateOfflineBanner)
+  window.addEventListener('online', updateOfflineBanner)
+
+  // Et on vérifie une première fois au chargement de la page
+  // (au cas où la page s'ouvre alors qu'on est déjà hors ligne)
+  updateOfflineBanner()
+}
