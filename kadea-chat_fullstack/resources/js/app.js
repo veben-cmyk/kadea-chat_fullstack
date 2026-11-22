@@ -90,6 +90,56 @@ if (list) {
   // Demande l'abonnement : c'est là que le "videur" (transmit.authorize) vérifie que tu es membre
   subscription.create()
   .catch((error) => console.error('Abonnement au temps réel impossible :', error))
+    // --- Envoi d'un message sans recharger la page ---
+  // On retrouve le formulaire grâce à l'étiquette posée à l'étape 1
+  const messageForm = document.querySelector('[data-message-form]')
+  // Le champ texte : son name="content" est celui que lit le contrôleur
+  const messageInput = messageForm.querySelector('input[name="content"]')
+
+    messageForm.addEventListener('submit', async (event) => {
+    // Sans cette ligne, le navigateur enverrait le formulaire "à l'ancienne"
+    // et rechargerait toute la page. C'est LA ligne clé de la fonctionnalité.
+    event.preventDefault()
+
+    // Message vide (ou seulement des espaces) : on n'envoie rien
+    if (!messageInput.value.trim()) return
+
+    // event.submitter = le bouton qui a déclenché l'envoi (le bouton "Envoyer")
+    const sendButton = event.submitter
+
+        // FormData lit TOUS les champs du formulaire : le texte (content)
+    // ET le jeton de sécurité _csrf ajouté par {{ csrfField() }}.
+    // Sans ce jeton, Adonis refuserait la requête (erreur 403).
+    const data = new FormData(messageForm)
+
+    // On désactive le bouton pendant l'envoi : pas de double envoi si on clique deux fois
+    if (sendButton) sendButton.disabled = true
+
+    try {
+      // fetch envoie la requête SANS quitter la page.
+      // form.action contient déjà la bonne adresse : /chat/12/messages
+      const response = await fetch(messageForm.action, {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' },
+      })
+
+      // response.ok = vrai si le serveur a répondu "tout va bien" (codes 200 à 299)
+      if (!response.ok) throw new Error('Le serveur a répondu ' + response.status)
+
+      // Succès : on vide le champ. Pas besoin de créer la bulle ici :
+      // le serveur fait transmit.broadcast, et TON navigateur reçoit le message
+      // comme les autres, puis addMessage() l'affiche.
+      messageInput.value = ''
+    } catch (error) {
+      console.error("Envoi du message impossible :", error)
+    } finally {
+      // finally s'exécute dans TOUS les cas (succès ou erreur) :
+      // on réactive le bouton et on remet le curseur dans le champ
+      if (sendButton) sendButton.disabled = false
+      messageInput.focus()
+    }
+  })
 }
 
 // --- Photo de profil : envoi direct à Cloudinary, puis enregistrement de l'adresse ---

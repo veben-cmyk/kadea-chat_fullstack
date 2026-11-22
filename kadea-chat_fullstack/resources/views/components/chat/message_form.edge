@@ -11,7 +11,7 @@
 |  - Le bouton "+" est décoratif pour l'instant (pièces jointes plus tard).
 --}}
 <div class="border-t border-line bg-page px-3 py-3">
-  <form method="POST" action="{{ route('messages.store', { id: $props.get('conversationId') }) }}" data-loading class="flex items-center gap-2">
+  <form data-message-form method="POST" action="{{ route('messages.store', { id: $props.get('conversationId') }) }}" data-loading class="flex items-center gap-2">
     {{ csrfField() }}
 
     <button type="button" disabled class="rounded-lg p-2 text-ink opacity-60" aria-label="Ajouter une pièce jointe (bientôt)" title="Bientôt disponible">

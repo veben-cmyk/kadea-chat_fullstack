@@ -64,8 +64,12 @@ export default class MessagesController {
         conversation.updatedAt = DateTime.now()
         await conversation.save()
 
-        // 5. Retour à la conversation, qui affiche maintenant le nouveau message
-        return response.redirect().toRoute('chat.show', { id: conversation.id })
+        // 5a. Appel venu de fetch() (Accept: application/json) : on répond juste
+        // "créé" avec l'id du message. Pas de redirection, donc le serveur ne
+        // reconstruit pas toute la page pour rien : c'est beaucoup plus rapide.
+        if (request.accepts(['html', 'json']) === 'json') {
+            return response.created({ id: message.id })
+        }
 
     }
 

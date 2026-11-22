@@ -102,7 +102,7 @@ export default class AuthController {
         user.isEmailConfirmed = true
         storedToken.usedAt = DateTime.now() // On marque le token comme utilisé pour qu'il soit inutilisable à l'avenir
 
-        // Sauvegarde des deux enregistrements
+        // Sauvegarde synchrone des deux enregistrements
         await user.save()
         await storedToken.save()
 
