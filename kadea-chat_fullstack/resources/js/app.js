@@ -10,11 +10,55 @@ if (list) {
   const currentUserId = Number(list.dataset.currentUserId)
   const isGroup = list.dataset.isGroup === 'true'
 
+  // Le formulaire d'envoi (étiquette data-message-form) et son jeton CSRF.
+  // Le jeton servira aussi aux formulaires "Supprimer" des bulles créées en JavaScript.
+  const messageForm = document.querySelector('[data-message-form]')
+  const csrfToken = messageForm?.querySelector('input[name="_csrf"]')?.value ?? ''
+
   // Faire défiler la liste tout en bas (le dernier message visible)
   const scrollToBottom = () => {
     list.scrollTop = list.scrollHeight
   }
   scrollToBottom()
+
+  // Les 3 icônes du menu, copiées de ui/icon.edge (mêmes dessins)
+  const svg = (paths) =>
+    `<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`
+  const ICONS = {
+    chevron: svg('<path d="m6 9 6 6 6-6" />'),
+    copy: svg('<rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />'),
+    trash: svg('<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />'),
+  }
+
+  // Le menu d'actions d'une bulle : MÊME structure et mêmes classes que message_bubble.edge.
+  // innerHTML est sans danger ICI : ce texte ne contient aucune donnée tapée par un
+  // utilisateur (seulement nos balises, des numéros et le jeton). Le contenu du
+  // message, lui, reste toujours mis avec textContent (voir createBubble).
+  function menuHtml(message, isMine) {
+    // Le bouton Supprimer n'existe que sur MES messages
+    const deleteForm = isMine
+      ? `<form data-delete-form method="POST"
+           action="/chat/${conversationId}/messages/${message.id}/delete">
+           <input type="hidden" name="_csrf" value="${csrfToken}">
+           <button type="submit" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-danger hover:bg-danger/10">
+             ${ICONS.trash} Supprimer
+           </button>
+         </form>`
+      : ''
+
+    return `
+      <details data-message-menu class="absolute right-1 top-1">
+        <summary class="flex h-6 w-6 cursor-pointer list-none items-center justify-center rounded-full bg-black/10 transition md:opacity-0 md:group-hover:opacity-100 [&::-webkit-details-marker]:hidden" aria-label="Actions sur le message">
+          ${ICONS.chevron}
+        </summary>
+        <div class="absolute right-0 top-7 z-10 w-40 rounded-lg border border-line bg-surface p-1 text-sm text-ink shadow-lg">
+          <button type="button" data-copy-message class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-page">
+            ${ICONS.copy} Copier
+          </button>
+          ${deleteForm}
+        </div>
+      </details>`
+  }
 
   // Fabrique UNE bulle : même structure et mêmes classes que message_bubble.edge
   function createBubble(message) {
@@ -25,28 +69,38 @@ if (list) {
     row.className = 'flex ' + (isMine ? 'justify-end' : 'justify-start')
 
     const bubble = document.createElement('div')
+    // "group relative pr-9" : comme dans message_bubble.edge (survol + place de la flèche)
     bubble.className =
-      'max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] ' +
+      'group relative pr-9 max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] ' +
       (isMine ? 'bg-brand-600 text-white' : 'border border-line bg-surface text-ink')
 
-    // Dans un groupe, on affiche le nom de l'expéditeur au-dessus des messages des autres
+    // 1. Le menu en premier (comme dans le fichier Edge)
+    bubble.innerHTML = menuHtml(message, isMine)
+
+    // 2. Dans un groupe, le nom de l'expéditeur au-dessus des messages des autres
     if (!isMine && isGroup && message.senderName) {
       const name = document.createElement('p')
-      name.className = 'mb-0.5 text-xs font-bold text-link'
+      name.className = 'mb-0.5 text-xs font-bold text-muted'
       name.textContent = message.senderName
       bubble.append(name)
     }
 
+    // 3. Le texte. textContent (jamais innerHTML) : si quelqu'un envoie "<script>",
+    // il s'affiche comme du texte au lieu de s'exécuter (protection XSS)
     const text = document.createElement('p')
     text.className = 'whitespace-pre-wrap break-words'
     text.dataset.messageText = ''
     text.textContent = message.content
 
-    const time = document.createElement('p')
-    time.className = 'mt-1 text-right text-[10px] ' + (isMine ? 'text-white/70' : 'text-muted')
+    // 4. La ligne du bas : l'heure seulement (Supprimer est dans le menu)
+    const meta = document.createElement('div')
+    meta.className =
+      'mt-1 flex items-center justify-end gap-2 text-[10px] ' + (isMine ? 'text-white/70' : 'text-muted')
+    const time = document.createElement('span')
     time.textContent = message.timeLabel
+    meta.append(time)
 
-    bubble.append(text, time)
+    bubble.append(text, meta)
     row.append(bubble)
     return row
   }
@@ -63,7 +117,7 @@ if (list) {
     scrollToBottom()
   }
 
-    // Un message vient d'être supprimé par son auteur : on transforme la bulle sur place
+  // Un message vient d'être supprimé par son auteur : on transforme la bulle sur place
   function markDeleted(id) {
     const row = list.querySelector(`[data-message-id="${id}"]`)
     if (!row) return
@@ -71,7 +125,8 @@ if (list) {
     const text = row.querySelector('[data-message-text]')
     text.textContent = 'Ce message a été supprimé'
     text.classList.add('italic', 'opacity-70')
-    row.querySelector('[data-delete-form]')?.remove()
+    // Un message supprimé n'a plus de menu (ni Copier, ni Supprimer)
+    row.querySelector('[data-message-menu]')?.remove()
   }
 
   // Connexion ouverte avec le serveur, puis abonnement au canal de CETTE conversation
@@ -90,54 +145,122 @@ if (list) {
   // Demande l'abonnement : c'est là que le "videur" (transmit.authorize) vérifie que tu es membre
   subscription.create()
   .catch((error) => console.error('Abonnement au temps réel impossible :', error))
-    // --- Envoi d'un message sans recharger la page ---
-  // On retrouve le formulaire grâce à l'étiquette posée à l'étape 1
-  const messageForm = document.querySelector('[data-message-form]')
-  // Le champ texte : son name="content" est celui que lit le contrôleur
+
+  // --- Envoi d'un message sans recharger la page ---
   const messageInput = messageForm.querySelector('input[name="content"]')
 
-    messageForm.addEventListener('submit', async (event) => {
+  messageForm.addEventListener('submit', async (event) => {
     // Sans cette ligne, le navigateur enverrait le formulaire "à l'ancienne"
-    // et rechargerait toute la page. C'est LA ligne clé de la fonctionnalité.
+    // et rechargerait toute la page
     event.preventDefault()
 
     // Message vide (ou seulement des espaces) : on n'envoie rien
     if (!messageInput.value.trim()) return
 
-    // event.submitter = le bouton qui a déclenché l'envoi (le bouton "Envoyer")
+    // event.submitter = le bouton qui a déclenché l'envoi
     const sendButton = event.submitter
 
-        // FormData lit TOUS les champs du formulaire : le texte (content)
-    // ET le jeton de sécurité _csrf ajouté par {{ csrfField() }}.
-    // Sans ce jeton, Adonis refuserait la requête (erreur 403).
+    // FormData lit le texte (content) ET le jeton _csrf du formulaire
     const data = new FormData(messageForm)
 
-    // On désactive le bouton pendant l'envoi : pas de double envoi si on clique deux fois
+    // Pas de double envoi pendant que le message part
     if (sendButton) sendButton.disabled = true
 
     try {
-      // fetch envoie la requête SANS quitter la page.
-      // form.action contient déjà la bonne adresse : /chat/12/messages
       const response = await fetch(messageForm.action, {
         method: 'POST',
         body: data,
         headers: { Accept: 'application/json' },
       })
-
-      // response.ok = vrai si le serveur a répondu "tout va bien" (codes 200 à 299)
       if (!response.ok) throw new Error('Le serveur a répondu ' + response.status)
 
-      // Succès : on vide le champ. Pas besoin de créer la bulle ici :
-      // le serveur fait transmit.broadcast, et TON navigateur reçoit le message
-      // comme les autres, puis addMessage() l'affiche.
+      // Succès : on vide le champ. La bulle arrivera par Transmit (addMessage)
       messageInput.value = ''
     } catch (error) {
-      console.error("Envoi du message impossible :", error)
+      console.error('Envoi du message impossible :', error)
     } finally {
-      // finally s'exécute dans TOUS les cas (succès ou erreur) :
-      // on réactive le bouton et on remet le curseur dans le champ
+      // Dans tous les cas : on réactive le bouton et on remet le curseur dans le champ
       if (sendButton) sendButton.disabled = false
       messageInput.focus()
+    }
+  })
+
+  // --- Copier un message ---
+  // Délégation d'événement : UN seul écouteur sur toute la liste, au lieu d'un par bulle.
+  // Avantage : ça marche aussi pour les bulles ajoutées plus tard en temps réel.
+  list.addEventListener('click', async (event) => {
+    // closest() remonte depuis l'élément cliqué (peut-être l'icône) jusqu'au bouton Copier
+    const copyButton = event.target.closest('[data-copy-message]')
+    if (!copyButton) return // le clic n'était pas sur "Copier"
+
+    // On remonte jusqu'à la bulle, puis on lit son texte
+    const row = copyButton.closest('[data-message-id]')
+    const text = row.querySelector('[data-message-text]').textContent
+
+    try {
+      // Le presse-papiers du système (marche sur localhost et en https)
+      await navigator.clipboard.writeText(text)
+    } catch (error) {
+      console.error('Copie impossible :', error)
+    }
+
+    // On referme le menu : <details> se ferme quand open passe à false
+    copyButton.closest('details').open = false
+  })
+
+  // --- Fermer le menu ouvert quand on clique ailleurs ---
+  // <details> ne se referme pas tout seul si on clique à côté : on s'en charge.
+  document.addEventListener('click', (event) => {
+    list.querySelectorAll('details[data-message-menu][open]').forEach((menu) => {
+      // Le clic a eu lieu en dehors de CE menu : on le ferme
+      if (!menu.contains(event.target)) menu.open = false
+    })
+  })
+
+    // --- Supprimer un message avec la fenêtre de confirmation ---
+  const deleteDialog = document.getElementById('delete-dialog')
+  // Le formulaire "Supprimer" qui attend la réponse de la fenêtre
+  let pendingDeleteForm = null
+
+  // 1. Clic sur "Supprimer" dans un menu.
+  // L'événement "submit" remonte jusqu'à la liste : délégation, comme pour Copier.
+  list.addEventListener('submit', (event) => {
+    const form = event.target.closest('[data-delete-form]')
+    if (!form) return // ce n'est pas un formulaire de suppression
+
+    event.preventDefault() // pas d'envoi "à l'ancienne", donc pas de rechargement
+    pendingDeleteForm = form // on le garde de côté le temps de la confirmation
+    form.closest('details').open = false // on referme le petit menu
+
+    // On efface la réponse précédente AVANT d'ouvrir : sinon, si on ferme avec Échap,
+    // returnValue garderait l'ancien 'confirm' et supprimerait sans le vouloir
+    deleteDialog.returnValue = ''
+    deleteDialog.showModal() // ouvre la fenêtre au centre, fond assombri
+  })
+
+  // 2. La fenêtre vient de se fermer (Annuler, Supprimer ou touche Échap)
+  deleteDialog.addEventListener('close', async () => {
+    const form = pendingDeleteForm
+    pendingDeleteForm = null
+
+    // returnValue = la "value" du bouton cliqué. Tout sauf 'confirm' = on ne fait rien.
+    if (deleteDialog.returnValue !== 'confirm' || !form) return
+
+    // On retient la bulle maintenant : markDeleted retirera le menu (et donc le formulaire)
+    const row = form.closest('[data-message-id]')
+
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form), // contient le jeton _csrf
+        headers: { Accept: 'application/json' },
+      })
+      if (!response.ok) throw new Error('Le serveur a répondu ' + response.status)
+
+      // Transmit préviendra aussi tout le monde, mais on met à jour MA bulle tout de suite
+      markDeleted(row.dataset.messageId)
+    } catch (error) {
+      console.error('Suppression impossible :', error)
     }
   })
 }

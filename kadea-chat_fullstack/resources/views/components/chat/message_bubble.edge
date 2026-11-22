@@ -10,11 +10,49 @@
 |   les très longs mots/liens pour qu'ils ne débordent pas.
 --}}
 @let(m = $props.get('message'))
-{{-- ajout de data-message-id Ça sert à éviter les doublons : avant d’ajouter une bulle, 
+{{-- ajout de data-message-id Ça sert à éviter les doublons : avant d’ajouter une bulle,
 le JavaScript regarde si elle est déjà dans la page.  --}}
 
 <div data-message-id="{{ m.id }}" class="flex {{ m.isMine ? 'justify-end' : 'justify-start' }}">
-  <div class="max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] {{ m.isMine ? 'bg-brand-600 text-white' : 'border border-line bg-surface text-ink' }}">
+  {{-- NOUVEAU : "group relative pr-9"
+       group    -> permet de réagir au survol de toute la bulle (group-hover:)
+       relative -> sert de repère pour placer la flèche en haut à droite
+       pr-9     -> marge à droite pour que le texte ne passe pas sous la flèche --}}
+  <div class="group relative pr-9 max-w-[85%] rounded-xl px-3 py-2 text-sm shadow-sm md:max-w-[65%] {{ m.isMine ? 'bg-brand-600 text-white' : 'border border-line bg-surface text-ink' }}">
+
+    {{-- NOUVEAU : le menu d'actions (pas sur un message déjà supprimé).
+         <details> s'ouvre et se ferme tout seul au clic, sans JavaScript. --}}
+    @if(!m.isDeleted)
+      <details data-message-menu class="absolute right-1 top-1">
+        {{-- La flèche : invisible sur ordinateur, visible au survol de la bulle.
+             Sur mobile (pas de survol), elle reste toujours visible. --}}
+        <summary class="flex h-6 w-6 cursor-pointer list-none items-center justify-center rounded-full bg-black/10 transition md:opacity-0 md:group-hover:opacity-100 [&::-webkit-details-marker]:hidden" aria-label="Actions sur le message">
+          @!ui.icon({ name: 'chevron-down', class: 'h-4 w-4' })
+        </summary>
+
+        {{-- Le menu qui s'ouvre sous la flèche --}}
+        <div class="absolute right-0 top-7 z-10 w-40 rounded-lg border border-line bg-surface p-1 text-sm text-ink shadow-lg">
+          {{-- Copier : sur tous les messages --}}
+          <button type="button" data-copy-message class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-page">
+            @!ui.icon({ name: 'copy', class: 'h-4 w-4' })
+            Copier
+          </button>
+
+          {{-- Supprimer : seulement sur MES messages --}}
+          @if(m.isMine)
+            <form data-delete-form method="POST"
+              action="{{ route('messages.destroy', { id: $props.get('conversationId'), messageId: m.id }) }}">
+              {{ csrfField() }}
+              <button type="submit" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-danger hover:bg-danger/10">
+                @!ui.icon({ name: 'trash', class: 'h-4 w-4' }) 
+                Supprimer
+              </button>
+            </form>
+          @end
+        </div>
+      </details>
+    @end
+
     @if(!m.isMine && $props.get('isGroup') && m.senderName)
       <p class="mb-0.5 text-xs font-bold text-muted">{{ m.senderName }}</p>
     @end
@@ -26,16 +64,10 @@ le JavaScript regarde si elle est déjà dans la page.  --}}
       <p data-message-text class="whitespace-pre-wrap break-words">{{ m.content }}</p>
     @end
 
+    {{-- CHANGÉ : l'ancien lien "Supprimer" a disparu d'ici (il est dans le menu).
+         Il ne reste que l'heure et "lu". --}}
     <div class="mt-1 flex items-center justify-end gap-2 text-[10px] {{ m.isMine ? 'text-white/70' : 'text-muted' }}">
-      {{-- Supprimer : seulement sur MES messages non supprimés --}}
-      @if(m.isMine && !m.isDeleted)
-        <form data-delete-form method="POST" onsubmit="return confirm('Supprimer ce message ? Cette action est définitive.')"
-          action="{{ route('messages.destroy', { id: $props.get('conversationId'), messageId: m.id }) }}">
-          {{ csrfField() }}
-          <button type="submit" class="hover:underline" aria-label="Supprimer ce message">Supprimer</button>
-        </form>
-      @end
       <span>{{ m.timeLabel }}{{ m.isMine && m.isRead ? ' · lu' : '' }}</span>
     </div>
-    </div>
+  </div>
 </div>

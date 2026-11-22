@@ -1,7 +1,8 @@
 {{--
 | ui/icon.edge : toutes les icônes au même endroit (SVG "inline").
 | Usage : @!ui.icon({ name: 'send', class: 'h-5 w-5' })
-| Noms disponibles : chat, settings, search, send, plus, back
+| Noms disponibles : chat, settings, search, send, plus, back, users, logout,
+|                    chevron-down, copy, trash
 | Les icônes prennent la couleur du texte parent (stroke="currentColor") :
 | pour changer leur couleur, change le "text-..." du parent.
 --}}
@@ -31,7 +32,19 @@
     <path d="M16 17 21 12 16 7"/>
     <path d="M21 12H9"/>
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+
+  {{-- NOUVEAU : les 3 icônes du menu des messages --}}
+  @elseif(name === 'chevron-down')
+    {{-- Petite flèche vers le bas : ouvre le menu --}}
+    <path d="m6 9 6 6 6-6" />
+  @elseif(name === 'copy')
+    {{-- Deux feuilles superposées : "Copier" --}}
+    <rect x="9" y="9" width="13" height="13" rx="2" />
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  @elseif(name === 'trash')
+    {{-- Corbeille : "Supprimer" --}}
+    <path d="M3 6h18" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
   @end
 </svg>
-
-

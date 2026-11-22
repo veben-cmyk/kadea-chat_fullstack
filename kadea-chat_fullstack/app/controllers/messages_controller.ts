@@ -73,9 +73,13 @@ export default class MessagesController {
 
     }
 
-    /** POST /chat/:id/messages/:messageId/delete : supprimer MON message */
-    async destroy({ params, response, session, auth }: HttpContext) {
+        /** POST /chat/:id/messages/:messageId/delete : supprimer MON message */
+    async destroy({ params, request, response, session, auth }: HttpContext) {
         const user = auth.user!
+
+        // NOUVEAU : true si l'appel vient de fetch() (en-tête Accept: application/json).
+        // Dans ce cas on répond en JSON, sans redirection ni flash : pas de rechargement.
+        const wantsJson = request.accepts(['html', 'json']) === 'json'
 
         // Le message doit être dans CETTE conversation, écrit par MOI, et pas déjà supprimé.
         // Ces trois conditions empêchent de supprimer le message de quelqu'un d'autre
@@ -88,6 +92,9 @@ export default class MessagesController {
             .first()
 
         if (!message) {
+            // 404 = "introuvable" : fetch le verra comme une erreur (response.ok = false)
+            if (wantsJson) return response.notFound({ error: 'Message introuvable.' })
+
             session.flash('error', 'Message introuvable.')
             return response.redirect().toRoute('chat.show', { id: params.id })
         }
@@ -99,8 +106,11 @@ export default class MessagesController {
         // Prévient les autres navigateurs ouverts sur cette conversation
         transmit.broadcast(`conversations/${params.id}`, { isDeleted: true, id: message.id })
 
-        session.flash('success', 'Message supprimé.')
+        // NOUVEAU : appel venu de fetch -> simple réponse "OK", pas de flash ni de rechargement
+        if (wantsJson) return response.ok({ id: message.id })
 
+        // Formulaire classique (si le JavaScript ne marche pas) : comme avant
+        session.flash('success', 'Message supprimé.')
         return response.redirect().toRoute('chat.show', { id: params.id })
     }
 }

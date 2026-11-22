@@ -13,7 +13,7 @@
   @slot('sidebar')
     @!chat.sidebar({ conversations: conversations, activeId: conversation.id })
   @end
-  
+
   @!chat.conversationHeader({ conversation: conversation })
 
   {{-- Zone des messages. id="messages" -> app.js la fait défiler tout en bas. --}}
@@ -44,4 +44,26 @@
   </div>
 
   @!chat.messageForm({ conversationId: conversation.id })
+
+  {{-- NOUVEAU : la fenêtre de confirmation de suppression (UNE seule pour toute la page).
+       - Invisible tant qu'app.js n'appelle pas showModal().
+       - m-auto : la centre à l'écran (Tailwind retire la marge par défaut des balises).
+       - backdrop:bg-black/50 : assombrit tout le reste de la page derrière la fenêtre. --}}
+  <dialog id="delete-dialog" aria-labelledby="delete-dialog-title"
+    class="m-auto w-[min(90vw,22rem)] rounded-xl border border-line bg-surface p-5 text-ink shadow-xl backdrop:bg-black/50">
+    <h2 id="delete-dialog-title" class="font-display text-base font-bold">Supprimer ce message ?</h2>
+    <p class="mt-2 text-sm text-muted">Il sera remplacé par « Ce message a été supprimé » pour tout le monde.</p>
+
+    {{-- method="dialog" : cliquer sur un bouton FERME la fenêtre, sans rien envoyer au serveur.
+         La "value" du bouton cliqué est retenue dans dialog.returnValue ('cancel' ou 'confirm').
+         autofocus sur Annuler : si on appuie sur Entrée par réflexe, on ne supprime rien. --}}
+    <form method="dialog" class="mt-5 flex justify-end gap-2">
+      <button value="cancel" autofocus class="rounded-lg border border-line px-4 py-2 text-sm hover:bg-page">
+        Annuler
+      </button>
+      <button value="confirm" class="rounded-lg bg-danger px-4 py-2 text-sm font-bold text-white hover:opacity-90 dark:text-brand-950">
+        Supprimer
+      </button>
+    </form>
+  </dialog>
 @end
