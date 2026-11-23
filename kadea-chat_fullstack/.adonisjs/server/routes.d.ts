@@ -14,6 +14,7 @@ export type ScannedRoutes = {
     'chat.new': { paramsTuple?: []; params?: {} }
     'chat.store': { paramsTuple?: []; params?: {} }
     'chat.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'chat.read': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'messages.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
     'profile.update': { paramsTuple?: []; params?: {} }
@@ -69,6 +70,7 @@ export type ScannedRoutes = {
     'register.store': { paramsTuple?: []; params?: {} }
     'login.store': { paramsTuple?: []; params?: {} }
     'chat.store': { paramsTuple?: []; params?: {} }
+    'chat.read': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'messages.store': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'profile.update': { paramsTuple?: []; params?: {} }
     'profile.password': { paramsTuple?: []; params?: {} }

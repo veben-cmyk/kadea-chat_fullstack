@@ -6,6 +6,8 @@ import Conversation from '#models/conversation'
 import ConversationMember from '#models/conversation_member'
 import Message from '#models/message'
 import { buildConversationList } from '#services/conversation_list'
+import { DateTime } from 'luxon'
+import transmit from '@adonisjs/transmit/services/main'
 
 
 
@@ -105,6 +107,9 @@ export default class ChatController {
     /**
    * GET /chat/:id : ouvre une conversation et affiche ses messages
    */
+      /**
+   * GET /chat/:id : ouvre une conversation et affiche ses messages
+   */
   async show({ params, view, response, session, auth }: HttpContext) {
     const user = auth.user!
 
@@ -122,8 +127,8 @@ export default class ChatController {
       return response.redirect().toRoute('chat.index')
     }
 
-        // 2. Les infos de l'en-tête, envoyées à chat/conversation_header.edge
-        // "other" = l'autre personne dans une discussion privée (1v1).
+    // 2. Les infos de l'en-tête, envoyées à chat/conversation_header.edge
+    // "other" = l'autre personne dans une discussion privée (1v1).
     // Les membres sont déjà chargés par le preload() de l'étape 1 :
     const other = row.members.find((member) => member.userId !== user.id)?.user
     const conversation = {
@@ -134,34 +139,85 @@ export default class ChatController {
       avatarUrl: row.isGroup ? null : (other?.avatarUrl ?? null),
       isGroup: row.isGroup,
       // Nombre de participants, affiché sous le nom du groupe ("3 membres").
-      // Sans cette ligne, la vue lisait une propriété inexistante -> "undefined".
       memberCount: row.members.length,
     }
 
-    // 3. Les messages, du plus ancien au plus récent
+    // NOUVEAU — 3. "Lu" : j'ouvre la conversation, donc j'ai tout lu jusqu'à maintenant.
+    // On retrouve MA ligne de participation (déjà chargée par le preload) et on la met à jour.
+    const myMembership = row.members.find((member) => member.userId === user.id)
+    if (myMembership) {
+      myMembership.lastReadAt = DateTime.now()
+      await myMembership.save()
+
+      // On prévient les autres navigateurs ouverts : "cette personne vient de tout lire"
+      transmit.broadcast(`conversations/${row.id}`, { type: 'read', readerId: user.id })
+    }
+
+    // NOUVEAU — Jusqu'à quand l'AUTRE personne a lu.
+    // Seulement en discussion privée (dans un groupe : null, donc jamais "lu").
+    // null aussi si l'autre n'a jamais ouvert la conversation.
+    const otherReadAt = row.isGroup
+      ? null
+      : (row.members.find((member) => member.userId !== user.id)?.lastReadAt ?? null)
+
+    // 4. Les messages, du plus ancien au plus récent
     const rows = await Message.query()
       .where('conversationId', row.id)
       .preload('sender')
       .orderBy('createdAt', 'asc')
 
-    const messages = rows.map((message) => ({
-      id: message.id,
-      content: message.content,
-      senderName: message.sender.fullName,
-      isMine: message.senderId === user.id, // sert à aligner la bulle à droite ou à gauche
-      isDeleted: message.isDeleted, 
-      timeLabel: formatMessageTime(message.createdAt),
-    }))
+    const messages = rows.map((message) => {
+      const isMine = message.senderId === user.id // sert à aligner la bulle à droite ou à gauche
+      return {
+        id: message.id,
+        content: message.content,
+        senderName: message.sender.fullName,
+        isMine,
+        isDeleted: message.isDeleted,
+        timeLabel: formatMessageTime(message.createdAt),
+        // NOUVEAU : "lu" = c'est MON message ET l'autre a lu APRÈS son envoi.
+        // Les dates Luxon se comparent directement avec <= (plus tôt ou en même temps).
+        isRead: isMine && otherReadAt !== null && message.createdAt <= otherReadAt,
+      }
+    })
 
-    // 4. La sidebar affiche toujours la liste complète de mes discussions
+    // 5. La sidebar affiche toujours la liste complète de mes discussions
     const conversations = await buildConversationList(user)
 
-    return view.render('pages/chat/show', { 
-      conversations, 
-      conversation, 
+    return view.render('pages/chat/show', {
+      conversations,
+      conversation,
       messages,
-      //Le JavaScript doit savoir qui regarde la page pour choisir gauche ou droite.  ajout currentUserId
+      // Le JavaScript doit savoir qui regarde la page pour choisir gauche ou droite
       currentUserId: user.id,
     })
+  }
+
+    /**
+   * POST /chat/:id/read : "j'ai tout lu jusqu'à maintenant".
+   * Appelé en arrière-plan par app.js quand un message arrive pendant que je regarde.
+   */
+  async markRead({ params, response, auth }: HttpContext) {
+    const user = auth.user!
+
+    // MA participation à CETTE conversation.
+    // Si je n'en suis pas membre, la requête ne trouve rien : impossible de "lire"
+    // une conversation qui n'est pas la mienne en changeant le numéro dans l'adresse.
+    const membership = await ConversationMember.query()
+      .where('conversationId', params.id)
+      .where('userId', user.id)
+      .first()
+
+    if (!membership) return response.notFound({ error: 'Conversation introuvable.' })
+
+    membership.lastReadAt = DateTime.now()
+    await membership.save()
+
+    // On prévient les autres navigateurs : "cette personne a tout lu".
+    // type: 'read' permet à app.js de distinguer cet événement d'un nouveau message.
+    // (C'est l'étape C qui s'en servira pour afficher "lu" en direct.)
+    transmit.broadcast(`conversations/${params.id}`, { type: 'read', readerId: user.id })
+
+    return response.ok({ ok: true })
   }
 }

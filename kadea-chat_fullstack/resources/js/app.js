@@ -96,9 +96,20 @@ if (list) {
     const meta = document.createElement('div')
     meta.className =
       'mt-1 flex items-center justify-end gap-2 text-[10px] ' + (isMine ? 'text-white/70' : 'text-muted')
+    
     const time = document.createElement('span')
     time.textContent = message.timeLabel
     meta.append(time)
+
+    // "lu" caché sur MES messages en discussion privée (comme dans message_bubble.edge).
+    // Il apparaîtra quand l'autre lira (voir showReadLabels).
+    if (isMine && !isGroup) {
+      const readLabel = document.createElement('span')
+      readLabel.dataset.readLabel = ''
+      readLabel.className = 'hidden'
+      readLabel.textContent = '· lu'
+      meta.append(readLabel)
+    }
 
     bubble.append(text, meta)
     row.append(bubble)
@@ -129,22 +140,63 @@ if (list) {
     row.querySelector('[data-message-menu]')?.remove()
   }
 
+    // Montre "· lu" sur tous mes messages encore marqués "non lu".
+  // querySelectorAll('[data-read-label].hidden') = les "lu" qui sont encore cachés.
+  function showReadLabels() {
+    list.querySelectorAll('[data-read-label].hidden').forEach((label) => {
+      label.classList.remove('hidden')
+    })
+  }
+
   // Connexion ouverte avec le serveur, puis abonnement au canal de CETTE conversation
   const transmit = new Transmit({ baseUrl: window.location.origin })
   const subscription = transmit.subscription(`conversations/${conversationId}`)
 
   // À chaque message diffusé par le serveur (transmit.broadcast), on ajoute la bulle
-  subscription.onMessage((message) => {
+    subscription.onMessage((message) => {
+    // NOUVEAU : un événement "quelqu'un a lu" n'est PAS un message.
+    // Sans ce test, addMessage fabriquerait une bulle vide ! (L'étape C le traitera.)
+        // Quelqu'un a lu la conversation
+    if (message.type === 'read') {
+      // Si c'est l'AUTRE personne (pas moi dans un autre onglet) : mes messages sont lus
+      if (message.readerId !== currentUserId && !isGroup) showReadLabels()
+      return
+    }
+
     if (message.isDeleted) {
       markDeleted(message.id)
       return
     }
     addMessage(message)
+
+    // NOUVEAU : le message vient de quelqu'un d'autre et je regarde la conversation :
+    // je préviens le serveur que je l'ai lu
+    if (message.senderId !== currentUserId) markConversationRead()
   })
 
   // Demande l'abonnement : c'est là que le "videur" (transmit.authorize) vérifie que tu es membre
   subscription.create()
   .catch((error) => console.error('Abonnement au temps réel impossible :', error))
+
+    // --- "J'ai lu" : prévenir le serveur ---
+  function markConversationRead() {
+    // Onglet caché (autre onglet ouvert, fenêtre réduite) : je ne lis pas vraiment,
+    // donc on ne dit rien au serveur
+    if (document.visibilityState !== 'visible') return
+
+    // Le jeton CSRF est obligatoire pour tout POST, même envoyé par fetch
+    const body = new FormData()
+    body.append('_csrf', csrfToken)
+
+    fetch(`/chat/${conversationId}/read`, {
+      method: 'POST',
+      body,
+      headers: { Accept: 'application/json' },
+    }).catch((error) => console.error('Impossible de marquer comme lu :', error))
+  }
+
+  // Quand je REVIENS sur l'onglet de la conversation, j'ai lu ce qui est arrivé entre-temps
+  document.addEventListener('visibilitychange', markConversationRead)
 
   // --- Envoi d'un message sans recharger la page ---
   const messageInput = messageForm.querySelector('input[name="content"]')

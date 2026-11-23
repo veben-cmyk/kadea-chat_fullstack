@@ -40,6 +40,8 @@ router.get('/chat', [ChatController, 'index']).as('chat.index').use(middleware.a
 router.get('/chat/new', [ChatController, 'create']).as('chat.new').use(middleware.auth())
 router.post('/chat', [ChatController, 'store']).as('chat.store').use(middleware.auth())
 router.get('/chat/:id', [ChatController, 'show']).as('chat.show').use(middleware.auth())
+// "J'ai lu jusqu'à maintenant" : appelé en arrière-plan (fetch) par app.js
+router.post('/chat/:id/read', [ChatController, 'markRead']).as('chat.read').use(middleware.auth())
 
 
 

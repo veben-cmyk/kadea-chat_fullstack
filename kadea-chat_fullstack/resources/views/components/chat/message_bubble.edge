@@ -65,9 +65,16 @@ le JavaScript regarde si elle est déjà dans la page.  --}}
     @end
 
     {{-- CHANGÉ : l'ancien lien "Supprimer" a disparu d'ici (il est dans le menu).
-         Il ne reste que l'heure et "lu". --}}
-    <div class="mt-1 flex items-center justify-end gap-2 text-[10px] {{ m.isMine ? 'text-white/70' : 'text-muted' }}">
-      <span>{{ m.timeLabel }}{{ m.isMine && m.isRead ? ' · lu' : '' }}</span>
+        Il ne reste que l'heure et "lu". --}}
+        <div class="mt-1 flex items-center justify-end gap-1 text-[10px] {{ m.isMine ? 'text-white/70' : 'text-muted' }}">
+      <span>{{ m.timeLabel }}</span>
+
+      {{-- "lu" : seulement sur MES messages, et seulement en discussion privée.
+          Il est TOUJOURS présent dans la page, mais caché (hidden) tant que l'autre n'a pas lu.
+          data-read-label : app.js le retrouve et retire "hidden" quand l'autre lit en direct. --}}
+      @if(m.isMine && !$props.get('isGroup'))
+        <span data-read-label class="{{ m.isRead ? '' : 'hidden' }}">· lu</span>
+      @end
     </div>
   </div>
 </div>
