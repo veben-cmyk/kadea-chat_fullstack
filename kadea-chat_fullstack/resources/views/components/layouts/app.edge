@@ -63,7 +63,9 @@
     </nav>
 
     {{-- 2. Colonne des discussions --}}
-    <aside class="{{ view === 'list' ? 'flex' : 'hidden md:flex' }} min-w-0 flex-1 flex-col bg-sidebar md:w-80 md:flex-none">
+        {{-- data-sidebar : étiquette pour app.js. data-current-user-id : qui est connecté
+        (auth est partagé automatiquement avec les vues par Adonis) --}}
+    <aside data-sidebar data-current-user-id="{{ auth.user?.id }}" class="{{ view === 'list' ? 'flex' : 'hidden md:flex' }} min-w-0 flex-1 flex-col bg-sidebar md:w-80 md:flex-none">
       <div class="min-h-0 flex-1">
         {{{ await $slots.sidebar() }}}
       </div>

@@ -3,7 +3,9 @@ import { DateTime } from 'luxon'
 import Conversation from '#models/conversation'
 import Message from '#models/message'
 import transmit from '@adonisjs/transmit/services/main'
-import { formatMessageTime } from '../helpers/time.js'
+import { formatMessageTime, formatTimeLabel } from '../helpers/time.js'
+
+import ConversationMember from '#models/conversation_member'
 
 export default class MessagesController {
     /**
@@ -58,6 +60,20 @@ export default class MessagesController {
             content: message.content,
             timeLabel: formatMessageTime(message.createdAt),
         })
+
+                // NOUVEAU : déposer une note dans la "boîte aux lettres" de CHAQUE membre
+        // (moi compris : si j'ai la conversation ouverte dans un autre onglet,
+        // sa sidebar doit aussi se mettre à jour).
+        const members = await ConversationMember.query().where('conversationId', conversation.id)
+
+        for (const member of members) {
+            transmit.broadcast(`users/${member.userId}`, {
+                conversationId: conversation.id,
+                senderId: user.id, // pour savoir si c'est un message "à moi" ou "de moi"
+                preview: message.content, // le texte affiché sous le nom dans la sidebar
+                timeLabel: formatTimeLabel(message.createdAt),
+            })
+        }
 
         // 4. Marquer la conversation comme active : la sidebar les trie par updatedAt,
         // donc celle-ci remontera en haut de la liste

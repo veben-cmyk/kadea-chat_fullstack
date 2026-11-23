@@ -22,6 +22,27 @@ export async function buildConversationList(user: User, search = '') {
         .orderBy('createdAt', 'desc')
         .first()
 
+      // NOUVEAU : combien de messages je n'ai pas encore lus dans cette conversation ?
+      // MA participation (déjà chargée par le preload) contient lastReadAt.
+      const me = conversation.members.find((member) => member.userId === user.id)
+
+      // Non lu = écrit par quelqu'un d'AUTRE + pas supprimé + envoyé APRÈS ma dernière lecture
+      const unreadQuery = Message.query()
+        .where('conversationId', conversation.id)
+        .whereNot('senderId', user.id)
+        .where('isDeleted', false)
+
+      // Si je n'ai jamais ouvert la conversation (lastReadAt = null) : tout est non lu,
+      // donc on n'ajoute pas de condition de date
+      if (me?.lastReadAt) {
+        unreadQuery.where('createdAt', '>', me.lastReadAt.toJSDate())
+      }
+
+      // count('* as total') demande à la base de COMPTER au lieu de renvoyer les lignes.
+      // Lucid range le résultat dans $extras.total (parfois en texte : Number() le convertit)
+      const [unread] = await unreadQuery.count('* as total')
+      const unreadCount = Number(unread.$extras.total)
+
       return {
         id: conversation.id,
         title: conversation.isGroup
@@ -30,6 +51,7 @@ export async function buildConversationList(user: User, search = '') {
         avatarUrl: conversation.isGroup ? null : (other?.avatarUrl ?? null),
         lastMessagePreview: last ? (last.isDeleted ? 'Message supprimé' : last.content) : '',
         lastMessageTimeLabel: last ? formatTimeLabel(last.createdAt) : '',
+        unreadCount, // NOUVEAU
       }
     })
   )

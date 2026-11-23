@@ -4,6 +4,11 @@ import { Transmit } from '@adonisjs/transmit-client'
 // s'il n'y a pas de liste de messages, c'est-à-dire hors d'une conversation ouverte.
 const list = document.getElementById('messages')
 
+// UNE seule connexion au temps réel pour toute la page, partagée par :
+// - la conversation ouverte (canal "conversations/12")
+// - la sidebar (canal personnel "users/5")
+const transmit = new Transmit({ baseUrl: window.location.origin })
+
 if (list) {
   // Les trois informations posées par show.edge
   const conversationId = list.dataset.conversationId
@@ -41,7 +46,7 @@ if (list) {
            action="/chat/${conversationId}/messages/${message.id}/delete">
            <input type="hidden" name="_csrf" value="${csrfToken}">
            <button type="submit" class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-danger hover:bg-danger/10">
-             ${ICONS.trash} Supprimer
+            ${ICONS.trash} Supprimer
            </button>
          </form>`
       : ''
@@ -149,8 +154,10 @@ if (list) {
   }
 
   // Connexion ouverte avec le serveur, puis abonnement au canal de CETTE conversation
-  const transmit = new Transmit({ baseUrl: window.location.origin })
-  const subscription = transmit.subscription(`conversations/${conversationId}`)
+  // UNE seule connexion au temps réel pour toute la page, partagée par :
+    // - la conversation ouverte (canal "conversations/12")
+    // - la sidebar (canal personnel "users/5")
+    const subscription = transmit.subscription(`conversations/${conversationId}`)
 
   // À chaque message diffusé par le serveur (transmit.broadcast), on ajoute la bulle
     subscription.onMessage((message) => {
@@ -439,4 +446,51 @@ if (offlineBanner) {
   // Et on vérifie une première fois au chargement de la page
   // (au cas où la page s'ouvre alors qu'on est déjà hors ligne)
   updateOfflineBanner()
+}
+
+// --- Sidebar en temps réel ---
+// [data-sidebar] est dans layouts/app.edge : présent sur toutes les pages de l'appli.
+const sidebar = document.querySelector('[data-sidebar]')
+
+if (sidebar) {
+  const me = Number(sidebar.dataset.currentUserId)
+  // La conversation ouverte en ce moment (0 si on est sur la liste ou le profil).
+  // list?.dataset : le "?." évite une erreur quand list n'existe pas sur la page.
+  const openConversationId = Number(list?.dataset.conversationId ?? 0)
+
+  // Met à jour UNE ligne de la sidebar à partir de la "note" envoyée par le serveur
+  function updateSidebarItem(note) {
+    const item = sidebar.querySelector(`[data-conversation-item="${note.conversationId}"]`)
+
+    // Conversation absente de la liste (quelqu'un m'écrit pour la toute première fois) :
+    // on ne fait rien ici, elle apparaîtra au prochain chargement de page
+    if (!item) return
+
+    // 1. Le nouvel aperçu et la nouvelle heure
+    item.querySelector('[data-preview]').textContent = note.preview
+    item.querySelector('[data-time]').textContent = note.timeLabel
+
+    // 2. La conversation remonte en haut de la liste.
+    // prepend() DÉPLACE l'élément au début de son parent (il n'est pas copié).
+    item.parentElement.prepend(item)
+
+    // 3. Pastille +1 : seulement si le message vient de quelqu'un d'AUTRE
+    // et que je ne suis pas déjà en train de lire CETTE conversation
+    const fromSomeoneElse = note.senderId !== me
+    const isOpen = note.conversationId === openConversationId
+
+    if (fromSomeoneElse && !isOpen) {
+      const badge = item.querySelector('[data-unread-badge]')
+      // Le chiffre affiché est du texte : Number() le convertit avant d'ajouter 1
+      badge.textContent = Number(badge.textContent || 0) + 1
+      badge.classList.remove('hidden')
+    }
+  }
+
+  // Abonnement à MON canal personnel. Le "videur" (transmit.authorize 'users/:id')
+  // vérifie que c'est bien le mien.
+  const userChannel = transmit.subscription(`users/${me}`)
+  userChannel.onMessage(updateSidebarItem)
+  userChannel.create()
+    .catch((error) => console.error('Sidebar en temps réel impossible :', error))
 }

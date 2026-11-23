@@ -85,6 +85,19 @@ router.post('/forgot-password', [PasswordResetController, 'sendLink']).as('forgo
 router.get('/reset-password/:token', [PasswordResetController, 'showReset']).as('reset.show')
 router.post('/reset-password/:token', [PasswordResetController, 'reset']).as('reset.store')
 
+
+/**
+ * Canal personnel d'un utilisateur : "users/5"
+ * Sert à mettre à jour SA sidebar (aperçu, ordre, non-lus) quand un message
+ * arrive dans n'importe laquelle de ses conversations.
+ * Le "videur" : seul l'utilisateur 5 peut écouter "users/5".
+ */
+transmit.authorize<{ id: string }>('users/:id', async (ctx, { id }) => {
+    await ctx.auth.check()
+
+    // L'id dans l'adresse du canal arrive en texte : Number() pour comparer avec un nombre
+    return ctx.auth.user?.id === Number(id)
+})
 /**
  * Canal privé d'une conversation : "conversations/3"
  * Transmit appelle cette fonction quand un navigateur essaie de s'abonner.

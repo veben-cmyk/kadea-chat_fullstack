@@ -5,10 +5,16 @@
 | Toute la ligne est un lien vers /chat/:id.
 | aria-current="page" dit aux lecteurs d'écran quelle discussion est ouverte.
 | "truncate" = coupe le texte trop long avec "..." au lieu de casser la mise en page.
+|
+| NOUVEAU : des étiquettes data-* pour qu'app.js mette la ligne à jour en direct :
+|   data-conversation-item="12" -> retrouver la ligne de la conversation 12
+|   data-preview, data-time     -> le texte et l'heure du dernier message
+|   data-unread-badge           -> la pastille du nombre de non-lus
 --}}
 @let(c = $props.get('conversation'))
 <a
   href="{{ route('chat.show', { id: c.id }) }}"
+  data-conversation-item="{{ c.id }}"
   class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-white/10 {{ $props.get('active') ? 'bg-white/15' : '' }}"
   {{ $props.get('active') ? 'aria-current=page' : '' }}
 >
@@ -17,8 +23,18 @@
   <div class="min-w-0 flex-1">
     <div class="flex items-baseline justify-between gap-2">
       <p class="truncate text-sm font-bold">{{ c.title }}</p>
-      <span class="shrink-0 text-[10px] text-white/70">{{ c.lastMessageTimeLabel }}</span>
+      <span data-time class="shrink-0 text-[10px] text-white/70">{{ c.lastMessageTimeLabel }}</span>
     </div>
-    <p class="truncate text-xs text-white/70">{{ c.lastMessagePreview || 'Aucun message' }}</p>
+
+    {{-- NOUVEAU : l'aperçu et la pastille côte à côte (flex) --}}
+    <div class="flex items-center justify-between gap-2">
+      <p data-preview class="truncate text-xs text-white/70">{{ c.lastMessagePreview || 'Aucun message' }}</p>
+
+      {{-- Pastille orange des non-lus. Toujours présente, mais cachée (hidden) s'il y en a 0 :
+          app.js n'aura qu'à changer le chiffre et retirer "hidden".
+          Pas de pastille sur la conversation ouverte : je suis en train de la lire. --}}
+      <span data-unread-badge
+        class="{{ c.unreadCount && !$props.get('active') ? '' : 'hidden' }} flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-bold text-brand-950">{{ c.unreadCount }}</span>
+    </div>
   </div>
 </a>
